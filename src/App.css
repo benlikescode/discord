@@ -1,0 +1,66 @@
+/* Fonts */
+
+@font-face {
+  font-family: 'Whitney';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Whitney Light Regular'), url('./font/whitneylight.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Whitney';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Whitney Book Regular'), url('./font/whitneybook.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Whitney';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Whitney Medium'), url('./font/whitneymedium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Whitney';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Whitney Semibold Regular'), url('./font/whitneysemibold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Whitney';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Whitney Bold'), url('./font/whitneybold.woff') format('woff');
+}
+
+/* App Styles */
+
+:root {
+  --home-page-width: 1180px;
+  --bencordGray1: #202225;
+  --bencordGray2: #2f3136;
+  --bencordGray3: #36393f;
+  --bencordLightGray: #dcddde;
+}
+  
+body {
+  font-family: 'Whitney', sans-serif;
+  margin: 0;
+  font-size: 1rem;
+  color: black;
+  background: white;
+}
+
+button, input {
+  font-family: 'Whitney', sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
