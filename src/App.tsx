@@ -12,6 +12,7 @@ import { config, auth } from './utils/firebase'
 import { UserSettingsView } from './components/UserSettingsView'
 import { useDispatch } from 'react-redux'
 import { updateUser, logOutUser } from './reducers/user'
+import { DirectMessageView } from './components/DirectMessageView'
 
 const App: FC = () => {
   const dispatch = useDispatch()
@@ -24,7 +25,8 @@ const App: FC = () => {
           updateUser({
             id: authUser.uid,
             name: authUser.displayName,
-            email: authUser.email
+            email: authUser.email,
+            avatar: authUser.photoURL
           })
         )
       }
@@ -47,6 +49,7 @@ const App: FC = () => {
           <Route exact path={routeList.app.landingPage} component={LandingPage} />
           <Route path={routeList.app.channel} component={ServerView} />
           <Route path={routeList.app.home} component={HomeView} />
+          <Route path={routeList.app.directMessages} component={DirectMessageView} />
         </Route>
       </Switch>
     </Router>

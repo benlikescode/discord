@@ -6,25 +6,20 @@ import { selectUser } from '../../reducers/user'
 import { Avatar } from '../System/Avatar'
 
 type Props = {
-  avatarColor: string
+  avatar?: string
   userName?: string
 }
 
-const UserInfo: FC<Props> = ({ avatarColor, userName }) => {
-  const [avatar, setAvatar] = useState("")
+const UserInfo: FC<Props> = ({ avatar, userName }) => {
   const user = useSelector(selectUser)
 
-  
-
-  console.log(user)
-
   return (
-    <UserInfoStyled avatarColor={ avatarColor }>
+    <UserInfoStyled>
      <div className="user-profile-image">
-       {avatar ? <Avatar url={avatar} size={30}/> : <span>{ user.name[0] }</span>}
+       <Avatar url={avatar ? avatar : user!.avatar} size={30}/>
       </div>
       <div className="user-name-wrapper">
-        <span>{ user.name }</span>
+        <span>{userName ? userName : user!.name }</span>
       </div>
     </UserInfoStyled>
   )

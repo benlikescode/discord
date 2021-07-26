@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { config, realDb } from '../../utils/firebase'
 import { ChannelMessagesStyled } from '.'
 import { FlexBox } from '../FlexBox'
-import { HashTag, HelpIcon, MemberList } from '../Icon'
+import { AtIcon, HashTag, HelpIcon, MemberList } from '../Icon'
 import { Message } from '../Message'
 import { Channel } from '../ChannelList'
 import { NewMessage } from '../NewMessage'
@@ -11,14 +11,16 @@ import { HelpModal } from '../HelpModal'
 import { MemberSidebar } from '../MemberSidebar'
 
 type Props = {
-  currentChannel: Channel | undefined
+  currentChannel?: Channel | undefined
+  type: 'channelMessages' | 'directMessages'
+  currentDirectName?: string
 }
 
 interface ParamTypes {
   channelToken: string
 }
 
-const ChannelMessages: FC<Props> = ({ currentChannel }) => {
+const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName }) => {
   const [messages, setMessages] = useState<JSX.Element[]>([])
   const { channelToken } = useParams<ParamTypes>()
   const messageListRef = createRef<HTMLDivElement>()
@@ -49,7 +51,9 @@ const ChannelMessages: FC<Props> = ({ currentChannel }) => {
             date={snap.val().date} 
             fullView={!(lastUser === snap.val().user)} 
             username={snap.val().user} 
-            content={snap.val().content}/>
+            content={snap.val().content}
+            avatar={snap.val().avatar}
+            />
         )
         lastUser = snap.val().user
       })
@@ -63,12 +67,12 @@ const ChannelMessages: FC<Props> = ({ currentChannel }) => {
   }, [messageListRef])
 
   return (
-    <ChannelMessagesStyled memberListOpen={memberListOpen}>
+    <ChannelMessagesStyled memberListOpen={memberListOpen && type === 'channelMessages'}>
 
       <div className="channel-messages-navbar">
         <FlexBox>
-          <HashTag size={24}/>
-          <span className="navbar-channel-name">{ currentChannel?.name }</span>
+          {currentChannel ? <HashTag size={24}/> : <AtIcon size={24}/>}        
+          <span className="navbar-channel-name">{currentChannel ? currentChannel?.name : currentDirectName}</span>
         </FlexBox>
         
         <FlexBox>
@@ -87,7 +91,7 @@ const ChannelMessages: FC<Props> = ({ currentChannel }) => {
           <NewMessage channelToken={ channelToken } currentChannel={ currentChannel } />
         </div>
 
-        {memberListOpen && <MemberSidebar/>}
+        {(memberListOpen && type === 'channelMessages') && <MemberSidebar/>}
         
       </div>
 

@@ -3,14 +3,13 @@ import { config, fireDb, auth } from '../../utils/firebase'
 import { Link, useHistory } from 'react-router-dom'
 import splashImage from './splash.png'
 import { RegisterStyled } from '.'
-import { getRandomEmoji } from '../../utils/helperFunctions'
+import { getRandomAvatar, getRandomEmoji } from '../../utils/helperFunctions'
 
 const Register: FC = () => {
   const history = useHistory()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [username, setUserName] = useState("")
-  const [userId, setUserId] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
   const register = (e: React.FormEvent) => {
@@ -18,9 +17,12 @@ const Register: FC = () => {
     auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
       const user = auth.currentUser
-      setUserId(user!.uid)
-      user!.updateProfile( {displayName: username } )
-      addUserToDB(user!.uid)
+      const avatar = `/images/${getRandomAvatar()}`
+      user!.updateProfile({
+        displayName: username,
+        photoURL: avatar
+      })
+      addUserToDB(user!.uid, avatar)
       createNewSever(username, user!.uid)  
     })
     .catch((error) => {
@@ -28,10 +30,11 @@ const Register: FC = () => {
     })
   }
 
-  const addUserToDB = (userId: string) => {
+  const addUserToDB = (userId: string, avatar: string) => {
     fireDb.collection('users').doc(userId).set({
       username: username,
-      friends: []
+      friends: [],
+      avatarUrl: avatar
     })
     .catch((error) => {
       console.log("Error writing document:", error)

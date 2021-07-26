@@ -33,7 +33,7 @@ const HomeView: FC = () => {
 
   useEffect(() => {
     loadPeople()
-  }, [user.id])
+  }, [])
 
   return (
     <StyledHomeView>
@@ -58,7 +58,7 @@ const HomeView: FC = () => {
           </div>
         </div>
         <div className="homeMainContainer">
-          { currView }
+        <HomePeopleList onlineCount={4} friendIds={friendIds}/>
         
           <div className="nowPlayingList">
             <h3 className="nowPlayingHeader">Active Now</h3>

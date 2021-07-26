@@ -21,6 +21,7 @@ const StyledHomeSidebar = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 18px 8px 4px 18px;
+    margin-bottom: 5px;
     span {
       text-transform: uppercase;
       font-size: 12px;
@@ -63,6 +64,13 @@ const StyledHomeSidebar = styled.div`
     box-sizing: border-box;
     background-color: #292b2f;
     z-index: 999;
+  }
+
+  .directMessageItem {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   
 `

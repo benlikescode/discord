@@ -55,6 +55,7 @@ const StyledButton = styled.div<StyledProps>`
       border-radius: 4px;
       background: transparent;
       font-weight: 400;
+      height: auto;
 
       :hover {
         background-color: #4f545c52;

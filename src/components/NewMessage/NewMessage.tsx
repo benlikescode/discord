@@ -7,7 +7,7 @@ import { selectUser } from '../../reducers/user'
 
 type Props = {
   channelToken: string
-  currentChannel: Channel | undefined
+  currentChannel?: Channel | undefined
 }
 
 const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => { 
@@ -20,7 +20,8 @@ const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => {
     newMessage.set({
       user: user.name,
       content: messageContent,
-      date: Date().toString()
+      date: Date().toString(),
+      avatar: user.avatar
     })
     messageInput.current!.value = ""
   }

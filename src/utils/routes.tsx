@@ -7,7 +7,8 @@ const App = {
   register: '/register',
   invite: '/invite/:serverToken',
   settings: '/server/:serverToken/settings',
-  userSettings: '/settings'
+  userSettings: '/settings',
+  directMessages: '/direct/:channelToken'
 }
 
 const routeList = {

@@ -35,7 +35,7 @@ const MemberSidebar: FC = () => {
       .get()
         .then((user) => {
           const username = user.docs[0].data().username
-          setFeeder(<UserInfo key={userId} userName={username} avatarColor={"#36393f"}/>)
+          setFeeder(<UserInfo key={userId} userName={username}/>)
         })
         .catch((error) => {
             console.log("Error getting documents: ", error);

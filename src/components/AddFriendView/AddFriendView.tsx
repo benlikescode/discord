@@ -22,7 +22,7 @@ const AddFriendView: FC = () => {
         const friends = thing.data().friends
         const newVal = friends.concat(user.id)
         thing.ref.update({friends: newVal})   
-        addToOurFriends(thing.id)
+        addToOurFriends(thing.id, thing.data().avatarUrl)
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
@@ -30,16 +30,33 @@ const AddFriendView: FC = () => {
     }
   }
 
-  const addToOurFriends = (friendsId: string) => {
+  const addToOurFriends = (friendsId: string, friendsAvatar: string) => {
     fireDb.collection('users').doc(user.id).get()
       .then((query) => {
         const friends = query.data()!.friends
         const newFriends = friends.concat(friendsId)
         query.ref.update({friends: newFriends})
+        createDirectMessage(friendsId, friendsAvatar)
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       })
+  }
+
+  const createDirectMessage = (friendsId: string, friendsAvatar: string) => {
+    const user1 = {
+      name: user.name,
+      avatar: user.avatar
+    }
+    const user2 = {
+      name: username,
+      avatar: friendsAvatar
+    }
+    fireDb.collection('directMessages').add({
+      users: [friendsId, user.id],
+      user1: user1,
+      user2: user2
+    }) 
   }
 
   return (

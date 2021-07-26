@@ -1,10 +1,6 @@
 import styled from 'styled-components'
 
-type StyledProps = {
-  avatarColor: string
-}
-
-const UserInfoStyled = styled.div<StyledProps>`
+const UserInfoStyled = styled.div`
   display: flex;
   align-items: center;
 
@@ -12,7 +8,6 @@ const UserInfoStyled = styled.div<StyledProps>`
     height: 32px;
     width: 32px;
     border-radius: 50%;
-    background: ${({ avatarColor }) => avatarColor};
     display: flex;
     align-items: center;
     justify-content: center;

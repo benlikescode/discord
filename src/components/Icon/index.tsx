@@ -19,6 +19,7 @@ export { default as Shield } from './Shield'
 export { default as DragIcon } from './DragIcon'
 export { default as Mute } from './Mute'
 export { default as Deafen } from './Deafen'
+export { default as AtIcon } from './AtIcon'
 
 
 

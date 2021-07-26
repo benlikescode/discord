@@ -23,26 +23,6 @@ const MessageStyled = styled.div<StyledProps>`
     width: 40px;
   }
 
-  .user-profile-image {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    background: #2f3136;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: #8e9297;
-  }
-
-  .user-profile-image img {
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-
   .message-info {
     padding-left: 15px;
   }

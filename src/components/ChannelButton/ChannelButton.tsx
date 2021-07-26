@@ -4,8 +4,7 @@ import { FlexBox } from '../FlexBox'
 import { ExitIcon, HashTag, VoiceIcon } from '../Icon'
 import { Channel } from '../ChannelList/index'
 import { useHistory, useParams } from 'react-router-dom'
-import { config } from '../../utils/firebase'
-import firebase from 'firebase'
+import { config, fireDb } from '../../utils/firebase'
 //import { webRTCHandler } from '../../utils/helperFunctions'
 
 type Props = {
@@ -20,8 +19,6 @@ interface ParamTypes {
 }
 
 const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
-  (!firebase.apps.length) ? firebase.initializeApp(config) : firebase.app()
-  const db = firebase.firestore()
   const history = useHistory()
   const [active, setActive] = useState(false)
   const { serverToken, channelToken } = useParams<ParamTypes>()
@@ -42,10 +39,9 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     }
   }
 
-
   const deleteChannel = (channel: Channel) => {
     if (channel.name !== "general") {
-      db.collection("channels").doc(channel.id).delete()
+      fireDb.collection("channels").doc(channel.id).delete()
     }
   }
 
@@ -122,8 +118,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     }
 
      function createRoom() {
-      const db = firebase.firestore();
-      const roomRef = db.collection('rooms').doc();
+      const roomRef = fireDb.collection('rooms').doc();
     
       console.log('Create PeerConnection with configuration: ', configuration);
       setPeerConnection(new RTCPeerConnection(configuration))
@@ -195,8 +190,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     }
 
     async function joinRoomById() {
-      const db = firebase.firestore();
-      const roomRef = db.collection('rooms').doc(`${roomId}`);
+      const roomRef = fireDb.collection('rooms').doc(`${roomId}`);
       const roomSnapshot = await roomRef.get();
       console.log("ROOMMM: " + roomId)
       console.log('Got room:', roomSnapshot.exists);
@@ -265,11 +259,6 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
       }
     }
 
-
-
-    
-       
-
   return (
     <ChannelButtonStyled>
       <button onClick={() => goToChannel(channel)} className={`text-channel-wrapper ${active ? 'active' : ''}`}>
@@ -288,8 +277,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
           </FlexBox>
         </div>
       </button>
-
-     
+   
         { channelType === "voice" &&
           <div>
             <video muted autoPlay playsInline id="localAudio" height="200px" width="200px"></video>
@@ -299,12 +287,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
 
           
         }
-
-        
-          
-  
-
-     
+   
      
     </ChannelButtonStyled>
   )

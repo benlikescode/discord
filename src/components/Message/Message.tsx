@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react'
 import { MessageStyled } from '.'
 import { formatDate } from '../../utils/helperFunctions'
 import { MessageOptions } from '../MessageOptions'
+import { Avatar } from '../System/Avatar'
 
 type Props = {
   id: String | null
@@ -11,9 +12,10 @@ type Props = {
   username: string
   content: string
   date?: string | undefined
+  avatar: string
 }
 
-const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, username, content, date }) => {
+const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, username, content, date, avatar }) => {
 
   const [isHovering, setIsHovering] = useState(false);
   
@@ -29,9 +31,7 @@ const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, userna
     <MessageStyled fullView={fullView}>
       <div className="message" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
         {fullView ?
-          <div className="user-profile-image">
-            <span>{ username[0] }</span>
-          </div>
+          <Avatar url={avatar} size={40}/>
           :
           <div className="user-profile-spacer"/>
         }

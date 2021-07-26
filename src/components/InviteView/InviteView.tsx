@@ -1,40 +1,31 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { InviteViewStyled } from '.'
 import splashImage from './splash.png'
 import { useHistory, useParams } from 'react-router-dom'
-import { config } from '../../utils/firebase'
-import firebase from 'firebase'
+import { config, fireDb } from '../../utils/firebase'
+import { selectUser } from '../../reducers/user'
+import { useSelector } from 'react-redux'
 
 interface ParamTypes {
   serverToken: string
 }
 
 const InviteView: FC = () => {
-  (!firebase.apps.length) ? firebase.initializeApp(config) : firebase.app()
-  const db = firebase.firestore()
-  const [userId, setUserId] = useState("")
   const history = useHistory()
   const { serverToken } = useParams<ParamTypes>()
-
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      setUserId(user.uid)
-    } else {
-      history.push("/login")
-    }
-  })
+  const user = useSelector(selectUser)
 
   const addUserToServer = () => {
-    if (userId) {
-      db.collection("serverTracker")
+    if (user.id) {
+      fireDb.collection("serverTracker")
       .where('servertoken', '==', serverToken)
-      .where('usertoken', '==', userId)
+      .where('usertoken', '==', user.id)
       .onSnapshot(({ docs }) => {
         const server = docs[0]
         if (!server) {
-          db.collection("serverTracker").add({
+          fireDb.collection("serverTracker").add({
             servertoken: serverToken,
-            usertoken: userId
+            usertoken: user.id
           })
         }
         getGeneralId(serverToken)
@@ -43,7 +34,7 @@ const InviteView: FC = () => {
   }
 
   const getGeneralId = (serverId: string) => {
-    db.collection('channels')
+    fireDb.collection('channels')
     .where("serverToken", "==", serverId)
     .onSnapshot(({docs}) => {
       const generalChannelId = docs[0].id
@@ -53,7 +44,7 @@ const InviteView: FC = () => {
 
   useEffect(() => {
     addUserToServer()
-  }, [userId])
+  }, [user.id])
 
   return (
     <InviteViewStyled >

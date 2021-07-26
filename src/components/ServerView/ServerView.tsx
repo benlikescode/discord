@@ -57,7 +57,7 @@ const ServerView: FC = () => {
       />
       {!isVideo ?
       <Switch>
-        <Route exact path={routeList.app.channel} render={() => <ChannelMessages currentChannel={currentChannel} />}  />
+        <Route exact path={routeList.app.channel} render={() => <ChannelMessages type="channelMessages" currentChannel={currentChannel} />}  />
       </Switch>
       :
       <VideoGrid/>

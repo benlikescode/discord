@@ -5,6 +5,11 @@ export const getRandomEmoji = () => {
     return emojiList[Math.floor(Math.random() * emojiList.length)]
 }
 
+export const getRandomAvatar = () => {
+  const defaultAvatars = ['defaultAvatarYellow.png', 'defaultAvatarBlue.png', 'defaultAvatarGreen.png', 'defaultAvatarRed.png']
+  return defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)]
+}
+
 export const formatDate = (dateRaw: string) => {
   const date = new Date(dateRaw)
   const today = new Date()

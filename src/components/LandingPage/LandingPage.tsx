@@ -9,32 +9,19 @@ import sectionImage2 from './SectionImage2.svg'
 import sectionImage3 from './SectionImage3.svg'
 import sectionImage4 from './SectionImage4.svg'
 import sectionImage5 from './SectionImage5.svg'
-import firebase from 'firebase'
-import { config } from '../../utils/firebase'
+import { config, fireDb } from '../../utils/firebase'
+import { selectUser } from '../../reducers/user'
+import { useSelector } from 'react-redux'
 
 const LandingPage: FC = () => {
-  (!firebase.apps.length) ? firebase.initializeApp(config) : firebase.app()
-  const db = firebase.firestore()
-  const auth = firebase.auth()
-  const user = auth.currentUser
-  const [userId, setUserId] = useState("")
   const [serverPath, setServerPath] = useState("")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
- 
-  useEffect(() => {
-    if (user) {
-      setIsLoggedIn(true)
-      setUserId(user.uid)
-    }
-    else {
-      console.log("User not signed in")
-    }
-  }, [user])
+  const user = useSelector(selectUser)
 
   const getUsersServers = () => {
-    if (userId) {
-      db.collection('servers')
-      .where('members', 'array-contains', userId)
+    if (user.id) {
+      fireDb.collection('servers')
+      .where('members', 'array-contains', user.id)
       .onSnapshot(({ docs }) => { 
         //const servers = docs.map((doc) => (doc.data()))
         const serverId = docs[0].id
@@ -44,7 +31,7 @@ const LandingPage: FC = () => {
   }
 
   const getGeneralId = (serverId: string) => {
-    db.collection('channels')
+    fireDb.collection('channels')
     .where("serverToken", "==", serverId)
     .where("name", "==", "general") // added this
     .onSnapshot(({docs}) => {
@@ -55,7 +42,7 @@ const LandingPage: FC = () => {
 
   useEffect(() => {
     getUsersServers()
-  }, [userId])
+  }, [user.id])
 
   return (
     <LandingPageStyled>

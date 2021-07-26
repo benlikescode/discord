@@ -42,17 +42,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, currentSer
   const handleUserSettingsClick = () => {
     history.push('/settings')
   }
-/*
-  const logOut = () => {
-    auth.signOut()
-    .then(() => {
-      history.push('/login')
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-*/
+
   const loadChannels = () => {
     if (serverToken !== '') {
       fireDb.collection('channels')
@@ -185,7 +175,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, currentSer
           }
           
           <div className="user-info-footer-bottom">
-            <UserInfo avatarColor={ "#2f3136" }/>
+            <UserInfo/>
             <div className="footerButtons">
               <Button type="icon">
                 <Mute size={20}/>
