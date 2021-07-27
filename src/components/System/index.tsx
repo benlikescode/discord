@@ -1,2 +1,6 @@
 export { Button } from './Button'
 export { Icon } from './Icon'
+export { Input } from './Input'
+export { Avatar } from './Avatar'
+export { ToggleSwitch } from './ToggleSwitch'
+export { Searchbar } from './Searchbar'
