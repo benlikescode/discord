@@ -4,6 +4,7 @@ import { config, fireDb } from '../../utils/firebase'
 import firebase from 'firebase'
 import { useParams } from 'react-router-dom'
 import { UserInfo } from '../UserInfo'
+import { UserType } from '../../types'
 
 interface ParamTypes {
   serverToken: string
@@ -11,50 +12,43 @@ interface ParamTypes {
 
 const MemberSidebar: FC = () => {
   const { serverToken } = useParams<ParamTypes>()
-  const [feeder, setFeeder] = useState<JSX.Element>()
-  const [usersJSX, setUsersJSX] = useState<JSX.Element[]>([])
+  const [members, setMembers] = useState<UserType[]>([])
+
+  const getServer = () => {
+    fireDb.collection('servers').doc(serverToken).get()
+    .then((server) => {
+      const members: string[] = server.data()!.members
+      getMembers(members)
+    })
+  }
+
+  const getMembers = (userIds: string[]) => {
+    let usersList: UserType[] = []
+    userIds.map((userId) => {
+      fireDb.collection('users').doc(userId).get() 
+      .then((user) => {
+        let newUser = {
+          name: user.data()!.username,
+          avatar: user.data()!.avatarUrl
+        }    
+        usersList.push(newUser)
+      })
+    })
+    setMembers(usersList)
+  }
 
   useEffect(() => {
     getServer()
   }, [serverToken])
-
-  const getServer = () => {
-    setUsersJSX([])
-    fireDb.collection('serverTracker')
-    .where('servertoken', '==', serverToken)
-    .onSnapshot(({ docs }) => {
-      const users = docs.map((doc) => (doc.data().usertoken)) 
-      getUsers(users)
-    })
-  }
-
-  const getUsers = (userIds: string[]) => {
-    userIds.map((userId: string) => {
-      fireDb.collection('users')
-      .where('usertoken', '==', userId)
-      .get()
-        .then((user) => {
-          const username = user.docs[0].data().username
-          setFeeder(<UserInfo key={userId} userName={username}/>)
-        })
-        .catch((error) => {
-            console.log("Error getting documents: ", error);
-        })
-      })
-  }
-
-  useEffect(() => {
-    if (feeder && usersJSX.filter((user) => user.key === feeder.key).length === 0) {
-      setUsersJSX([...usersJSX, feeder])
-    }
-  }, [feeder])
 
   return (
     <MemberSidebarStyled >
       <div className="member-list-center">
         <h2>Members</h2>
         <div className="members-grid">
-          { usersJSX }
+          { members.map((member, idx) => (
+            <UserInfo key={idx} avatar={member.avatar} userName={member.name}/>
+          )) }
         </div>
       </div>
     </MemberSidebarStyled>

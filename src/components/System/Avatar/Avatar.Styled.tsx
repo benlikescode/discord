@@ -22,6 +22,20 @@ const StyledAvatar = styled.div<StyledProps>`
     height: 100%;
     width: 100%;
   }
+
+  .status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 3px solid #36393f;
+    background-color: ${({ status }) => 
+    (status === 'Online' && 'green') ||
+    (status === 'Offline' && 'gray')
+    };
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+  }
 `
 
 export default StyledAvatar

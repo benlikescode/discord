@@ -17,29 +17,21 @@ const InviteView: FC = () => {
 
   const addUserToServer = () => {
     if (user.id) {
-      fireDb.collection("serverTracker")
-      .where('servertoken', '==', serverToken)
-      .where('usertoken', '==', user.id)
-      .onSnapshot(({ docs }) => {
-        const server = docs[0]
-        if (!server) {
-          fireDb.collection("serverTracker").add({
-            servertoken: serverToken,
-            usertoken: user.id
+      fireDb.collection('servers').doc(serverToken).get()
+      .then(server => {
+        const members: string[] = server.data()!.members
+        const generalId: string = server.data()!.generalId
+
+        if (!members.includes(user.id)) {
+          fireDb.collection('servers').doc(serverToken).update({
+            members: members.concat(user.id)
+          })
+          .then(() => {
+            history.push(`/server/${serverToken}/${generalId}`)
           })
         }
-        getGeneralId(serverToken)
-      })
+      }) 
     }
-  }
-
-  const getGeneralId = (serverId: string) => {
-    fireDb.collection('channels')
-    .where("serverToken", "==", serverId)
-    .onSnapshot(({docs}) => {
-      const generalChannelId = docs[0].id
-      history.push(`/server/${serverId}/${generalChannelId}`)
-    })
   }
 
   useEffect(() => {

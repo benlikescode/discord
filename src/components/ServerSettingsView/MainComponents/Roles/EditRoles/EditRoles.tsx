@@ -7,6 +7,7 @@ import { RoleType } from '../../../../../types/'
 import { config, fireDb } from '../../../../../utils/firebase'
 import { RolePreview } from './RolePreview'
 import { Input } from '../../../../System/Input'
+import firebase from 'firebase'
 
 interface ParamTypes {
   serverToken: string
@@ -16,41 +17,39 @@ interface ParamTypes {
 const EditRoles: FC = () => {
   const { serverToken, channelToken } = useParams<ParamTypes>()
   const history = useHistory()
-  const [roles, setRoles] = useState<RoleType[]>([])
+  const [roleIds, setRoleIds] = useState<string[]>([])
   const [inputRoleName, setInputRoleName] = useState("")
   const [selectedRoleColor, setSelectedRoleColor] = useState("rgb(153,170,181)")
+  const [permissions, setPermissions] = useState(['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'])
+  const [activeRole, setActiveRole] = useState("")
+
+ 
+
+  const loadRoles = () => {
+    fireDb.collection('servers').doc(serverToken).get()
+    .then((server) => {
+      const roleIds: string[] = server.data()!.roles
+      setRoleIds(roleIds)  
+      setActiveRole(roleIds[0])         
+    })
+  }
 
   useEffect(() => {
     loadRoles()
   }, [])
 
-  const loadRoles = () => {
-    fireDb.collection('servers').doc(serverToken)
-    .get()
-    .then((snapshot) => {
-      const roles: RoleType[] = snapshot.data()!.roles
-      setRoles(roles)
-            
+  const createRole = () => {
+    fireDb.collection('roles').add({
+      color: '#99aab5',
+      name: 'new role',
+      permissions: ['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'],
+      rank: 100
     })
-  }
-
-  const addRole = () => {
-    const newRole: RoleType = {
-      name: inputRoleName,
-      color: selectedRoleColor 
-    }
-    const newRoles = roles.concat(newRole)
-    setRoles(newRoles)
-    addRoleToDb(newRoles) 
-  }
-
-  const addRoleToDb = (newRoles: RoleType[]) => {
-    fireDb.collection("servers").doc(serverToken).update({roles: newRoles}).then(() => {
-      console.log("Roles Updated Successfully")
+    .then((role) => {
+      fireDb.collection('servers').doc(serverToken).update({
+        roles: firebase.firestore.FieldValue.arrayUnion(role.id)
+      })
     })
-    .catch((error) => {
-      console.log("Error writing document:", error)
-    }) 
   }
 
   return (
@@ -62,7 +61,7 @@ const EditRoles: FC = () => {
             <span className="backText">Back</span>
           </div>
           <div className="newRoleButton">
-            <Button type="icon" callback={addRole}>
+            <Button type="icon" callback={() => createRole()}>
               <Icon size={16} fill="#fff"><PlusIcon /></Icon>
             </Button>
           </div>
@@ -70,11 +69,11 @@ const EditRoles: FC = () => {
 
         <div className="list">
           { 
-          roles.map((role, idx) => (       
-            <RolePreview key={idx} roleColor={role.color} roleName={role.name}/>         
+          roleIds.map((roleId, idx) => (       
+            <RolePreview key={idx} roleId={roleId} setActiveRole={setActiveRole} activeRole={activeRole}/>         
           ))
           }
-          <RolePreview roleColor="#99aab5" roleName="@everyone"/>     
+          <RolePreview setActiveRole={setActiveRole} activeRole={activeRole}/>     
         </div>
        
       </div>
@@ -131,6 +130,8 @@ const EditRoles: FC = () => {
             </div>
           </div>
         </div>
+
+        <Button type="blue">Save Changes</Button>
        
       </div>
     </StyledEditRoles>

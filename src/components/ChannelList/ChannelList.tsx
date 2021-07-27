@@ -5,18 +5,19 @@ import { ChannelStyled, Channel } from '.'
 import { Deafen, DisconnectIcon, GearIcon, Mute, PingIcon, PlusIcon, ScreenIcon, VideoIcon, VoiceIcon } from '../Icon'
 import { Modal } from '../Modal'
 import { ChannelButton } from '../ChannelButton'
-import { Server } from '../Sidebar'
 import { createInviteLink } from '../../utils/helperFunctions'
 import { UserInfo } from '../UserInfo'
 import { Button, Icon } from '../System'
 import { ChevronDownIcon, XIcon } from '@heroicons/react/outline'
 import { ServerDropdown } from '../ServerDropdown'
+import { ServerType } from '../../types/'
+import { selectServer } from '../../reducers/server'
+import { useSelector } from 'react-redux'
 
 type Props = {
   setCurrentChannel: (channel: Channel) => void
   toggleVideoGrid: any
   //setCurrentVoiceChannel: (channel: Channel) => void
-  currentServer: Server | undefined
 }
 
 interface ParamTypes {
@@ -24,7 +25,7 @@ interface ParamTypes {
   channelToken: string
 }
 
-const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, currentServer }) => {
+const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   const history = useHistory()
   const [channelsJSX, setChannelsJSX] = useState<JSX.Element[]>([])
   const [voiceChannelsJSX, setVoiceChannelsJSX] = useState<JSX.Element[]>([])
@@ -33,6 +34,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, currentSer
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [inVoice, setInVoice] = useState(false)
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false)
+  const currentServer = useSelector(selectServer)
 
   const closeModal = () => {
     setInviteModalOpen(false) 
@@ -99,7 +101,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, currentSer
     <ChannelStyled>
       <div className="channel-list">
         <div className="channel-list-navbar">
-          <span className="server-name">{ currentServer && currentServer!.name }</span>
+          <span className="server-name">{ currentServer!.name }</span>
           <Button type="icon" callback={() => handleServerDropdown()}>
             {serverDropdownOpen ? 
               <Icon size={16} fill="#fff"><XIcon /></Icon>           

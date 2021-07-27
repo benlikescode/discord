@@ -6,11 +6,6 @@ const SidebarStyled = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  
-  img {
-    height: 25px;
-    width: 25px;
-  }
 
   .add-server-btn {
     margin: 12px 12px 0 12px;
@@ -75,6 +70,30 @@ const SidebarStyled = styled.div`
     border-top: 2px solid #2f3136;
     display: flex;
     margin: 10px 21px 0 21px;
+  }
+
+  .serverAcronym {
+    color: #fff;
+    font-weight: 500;
+    line-height: 1.2em;
+    white-space: nowrap;
+  }
+
+  .image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    object-fit: cover;
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+
+    :hover {
+      border-radius: 16px;
+
+    }
   }
 `
 

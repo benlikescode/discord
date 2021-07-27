@@ -1,30 +1,32 @@
 import React, { FC, useEffect, useState } from 'react'
-import { parse } from 'twemoji-parser'
 import { Link, useParams } from 'react-router-dom' 
+import { getServerAcronym } from '../../utils/helperFunctions'
+import { Avatar } from '../System/Avatar'
 
 type Props = {
-  key?: string
-  serverEmoji: string
-  serverID: string
-  channelToken: string
+  avatar?: string
+  name: string
+  serverId?: string
+  generalId?: string
 }
 
 interface ParamTypes {
   serverToken: string
 }
 
-const ServerAvatar: FC<Props> = ({ key, serverEmoji, serverID, channelToken }) => {
+const ServerAvatar: FC<Props> = ({ avatar, name, serverId, generalId }) => {
   const [active, setActive] = useState(false)
   const { serverToken } = useParams<ParamTypes>()
 
   useEffect(() => {
-    setActive(serverID === serverToken)
+    setActive(serverId === serverToken)
   }, [serverToken])
 
   return (
-    <Link key={key} to={`/server/${serverID}/${channelToken}`}>
+    <Link to={`/server/${serverId}/${generalId}`}>
       <div className={`server-image ${active ? 'active' : ''}`}>
-        <img src={serverEmoji && parse(serverEmoji)[0].url} alt="server emoji"/>
+        {avatar ? <img src={avatar} className="image" alt="" /> : <span className="serverAcronym">{getServerAcronym(name)}</span>}
+        
       </div>
     </Link>
   )

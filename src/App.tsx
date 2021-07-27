@@ -26,7 +26,8 @@ const App: FC = () => {
             id: authUser.uid,
             name: authUser.displayName,
             email: authUser.email,
-            avatar: authUser.photoURL
+            avatar: authUser.photoURL,
+            status: "Online"
           })
         )
       }

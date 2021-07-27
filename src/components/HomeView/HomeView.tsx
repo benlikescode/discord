@@ -1,6 +1,6 @@
 import { StyledHomeView } from '.'
 import React, { FC, useState, useEffect } from 'react'
-import { Sidebar, Server } from '../Sidebar'
+import { Sidebar } from '../Sidebar'
 import { config, fireDb } from '../../utils/firebase'
 import { Splash } from '../Splash'
 import { HomeSidebar } from '../HomeSidebar'
@@ -9,10 +9,11 @@ import { Button } from '../System'
 import { AddFriendView } from '../AddFriendView'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
+import { ServerType } from '../../types'
 
 const HomeView: FC = () => {
   const [loading, setLoading] = useState(true)
-  const [currentServer, setCurrentServer] = useState<Server>()
+  const [currentServer, setCurrentServer] = useState<ServerType>()
   const [currentUserName, setCurrentUserName] = useState("")
   const [friendIds, setFriendIds] = useState<string[]>([])
   const [currView, setCurrView] = useState(<HomePeopleList onlineCount={4} friendIds={friendIds}/>)
@@ -37,8 +38,7 @@ const HomeView: FC = () => {
 
   return (
     <StyledHomeView>
-      {loading && <Splash/>}
-      <Sidebar setLoading={() => setLoading(false)} setCurrentServer={(server) => setCurrentServer(server)}/>
+      <Sidebar setLoading={() => setLoading(false)} />
       <HomeSidebar />
       <div className="homeMainContainerWrapper">
         <div className="homeMainContainerNavbar">
@@ -58,7 +58,8 @@ const HomeView: FC = () => {
           </div>
         </div>
         <div className="homeMainContainer">
-        <HomePeopleList onlineCount={4} friendIds={friendIds}/>
+
+          { currView }
         
           <div className="nowPlayingList">
             <h3 className="nowPlayingHeader">Active Now</h3>

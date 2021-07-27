@@ -4,7 +4,11 @@ import { XIcon } from '@heroicons/react/outline'
 import { Button, Icon } from '../../../System'
 import { useHistory } from 'react-router'
 
-const Header: FC = () => {
+type Props = {
+  title: string
+}
+
+const Header: FC<Props> = ({ title }) => {
   const history = useHistory()
 
   const closeSettings = () => {
@@ -13,7 +17,7 @@ const Header: FC = () => {
 
   return (
     <StyledHeader> 
-      <span>Roles</span>
+      <span>{title}</span>
       <Button type="closeButton" callback={() => closeSettings()}>
         <Icon size={18} fill="#fff">
           <XIcon />

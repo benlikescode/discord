@@ -5,16 +5,47 @@ import { Button, Icon } from '../../../System'
 import { Searchbar } from '../../../System/Searchbar'
 import { Header } from '../Header'
 import { RoleItem } from './RoleItem'
+import { fireDb } from '../../../../utils/firebase'
+import { EditRoles } from './EditRoles'
+import { selectServer } from '../../../../reducers/server'
+import { useSelector } from 'react-redux'
+import firebase from 'firebase'
+import { useParams } from 'react-router-dom'
 
-const Roles: FC = () => {
+type Props = {
+  setCurrMainComponent: any
+}
+
+interface ParamTypes {
+  serverToken: string
+}
+
+const Roles: FC<Props> = ({ setCurrMainComponent }) => {
+  const server = useSelector(selectServer)
+  const { serverToken } = useParams<ParamTypes>()
+
+  // for whatever reason, when refereshing the edit roles page when using server from redux, we get an error as if we lost the server state on refresh?...
 
   const createRole = () => {
-
+    fireDb.collection('roles').add({
+      color: '#99aab5',
+      name: 'new role',
+      permissions: ['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'],
+      rank: 100
+    })
+    .then((role) => {
+      fireDb.collection('servers').doc(serverToken).update({
+        roles: firebase.firestore.FieldValue.arrayUnion(role.id)
+      })
+    })
+    setCurrMainComponent(<EditRoles />)
   }
+
+ 
 
   return (
     <StyledRoles>
-      <Header />
+      <Header title="Roles"/>
       <span className="description">Use roles to organize your server members and customize their permissions.</span>
 
       <div className="defaultPermissions">

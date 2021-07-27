@@ -3,7 +3,6 @@ import { ModalStyled } from '.'
 import { ExitIcon } from '../Icon'
 import { config, fireDb } from '../../utils/firebase'
 import { useHistory } from 'react-router-dom'
-import { getRandomEmoji } from '../../utils/helperFunctions'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
 
@@ -54,10 +53,28 @@ const Modal: FC<Props> = ( {closeModal, headerText, subHeadText, labelText, butt
   const createNewSever = () => {
     fireDb.collection("servers").add({
       name: inputField,
-      emoji: getRandomEmoji()
+      avatar: "",
+      members: [user.id],
+      owner: user.id
     })
     .then((server) => {
       addGeneralChannel(server)
+    })
+    .catch((error) => {
+      console.log("Error writing document:", error)
+    })
+  }
+
+  const addGeneralChannel = (server: any) => {
+    fireDb.collection("channels").add({
+      name: "general",
+      serverToken: server.id
+    })
+    .then((channel) => {
+      fireDb.collection('servers').doc(server.id).update({generalId: channel.id})
+      closeModal()
+      history.push(`/server/${server.id}/${channel.id}`)
+      window.location.reload()
     })
     .catch((error) => {
       console.log("Error writing document:", error)
@@ -72,34 +89,6 @@ const Modal: FC<Props> = ( {closeModal, headerText, subHeadText, labelText, butt
     document.execCommand('copy')
     document.body.removeChild(el)
     setIsCopied(true)
-  }
-
-  const addGeneralChannel = (server: any) => {
-    fireDb.collection("channels").add({
-      name: "general",
-      serverToken: server.id
-    })
-    .then((channel) => {
-      addServerTracker(server, channel)
-    })
-    .catch((error) => {
-      console.log("Error writing document:", error)
-    })
-  }
-
-  const addServerTracker = (server: any, channel: any) => {
-    fireDb.collection("serverTracker").add({
-      servertoken: server.id,
-      usertoken: user.id
-    })
-    .then(() => {
-      closeModal()
-      history.push(`/server/${server.id}/${channel.id}`)
-      window.location.reload()
-    })
-    .catch((error) => {
-      console.log("Error writing document:", error)
-    })
   }
 
   return (

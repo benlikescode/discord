@@ -3,7 +3,7 @@ import { config, fireDb, auth } from '../../utils/firebase'
 import { Link, useHistory } from 'react-router-dom'
 import splashImage from './splash.png'
 import { RegisterStyled } from '.'
-import { getRandomAvatar, getRandomEmoji } from '../../utils/helperFunctions'
+import { getRandomAvatar } from '../../utils/helperFunctions'
 
 const Register: FC = () => {
   const history = useHistory()
@@ -34,7 +34,8 @@ const Register: FC = () => {
     fireDb.collection('users').doc(userId).set({
       username: username,
       friends: [],
-      avatarUrl: avatar
+      avatarUrl: avatar,
+      status: "Online"
     })
     .catch((error) => {
       console.log("Error writing document:", error)
@@ -44,7 +45,7 @@ const Register: FC = () => {
   const createNewSever = (username : string, userId: string) => {
     fireDb.collection("servers").add({
       name: username + "'s server",
-      emoji: getRandomEmoji(),
+      avatar: "",
       owner: userId,
       members: [userId]
     })
@@ -62,6 +63,7 @@ const Register: FC = () => {
       serverToken: server.id
     })
     .then((thisChannel) => {
+      fireDb.collection('servers').doc(server.id).update({generalId: thisChannel.id})
       addVoiceChannel(server.id)
       history.push(`/server/${server.id}/${thisChannel.id}`)
     })

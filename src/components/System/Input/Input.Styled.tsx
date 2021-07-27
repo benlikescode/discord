@@ -10,6 +10,7 @@ const StyledInput = styled.div`
     display: block;
     color: #8e9297;
     font-size: 12px;
+    text-transform: uppercase;
   }
   .input-styled {
     height: 40px;

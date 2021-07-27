@@ -1,8 +1,7 @@
 type Role = {
   name: string
   color: string
+  permissions?: string[]
 }
-
-// add id permissions and members later
 
 export default Role

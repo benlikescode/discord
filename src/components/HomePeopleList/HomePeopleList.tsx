@@ -27,7 +27,7 @@ const HomePeopleList: FC<Props> = ({ onlineCount, friendIds }) => {
         const newUser: UserType = {
           id: query.id,
           name: query.data()!.username,
-          status: "Online",
+          status: query.data()!.status,
           avatar: query.data()!.avatarUrl
         }
         peopleArr.push(newUser)

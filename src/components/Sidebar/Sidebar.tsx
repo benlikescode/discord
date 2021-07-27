@@ -1,66 +1,67 @@
 import React, { FC, useState, useEffect } from 'react'
 import { config, fireDb } from '../../utils/firebase'
 import { Link, useParams } from 'react-router-dom'
-import { SidebarStyled, Server, ServerAvatar } from '.'
+import { SidebarStyled, ServerAvatar } from '.'
 import { Modal } from '../Modal'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
+import { ServerType } from '../../types'
+import { updateServer } from '../../reducers/server'
 
 type Props = {
   setLoading: () => void
-  setCurrentServer: (server: Server) => void
 }
 
 interface ParamTypes {
   serverToken: string
 }
 
-const Sidebar: FC<Props> = ({ setCurrentServer, setLoading }) => {
-  const [servers, setServers] = useState<Server[]>([])
+const Sidebar: FC<Props> = ({ setLoading }) => {
+  const [servers, setServers] = useState<ServerType[]>([])
   const [serversJSX, setServersJSX] = useState<JSX.Element[]>([])
   const { serverToken } = useParams<ParamTypes>()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const closeModal = () => setModalIsOpen(false)
   const user = useSelector(selectUser)
+  const dispatch = useDispatch()
+
 
   const getUsersServers = () => {
     if (user.id) {
       fireDb.collection('servers')
       .where('members', 'array-contains', user.id)
-      .onSnapshot(({ docs }) => { 
+      .onSnapshot(({ docs }) => {
+        let serverList: any = [] 
         docs.map((doc) => {
-          let currServer: Server = {
+          let currServer: ServerType = {
             id: doc.id,
             name: doc.data().name,
-            emoji: doc.data().emoji          
+            avatar: doc.data().avatar,
+            generalId: doc.data().generalId     
           }
-          setServers(servers.concat(currServer))
-          if (!servers.includes(currServer)) {
-            getGeneralId(currServer) 
-
-          }
-        })       
+          serverList.push(currServer)
+        })   
+        setServers(serverList)       
+        
       })
     }
   }
 
-  const getGeneralId = (server: Server) => {
-    fireDb.collection('channels')
-      .where("serverToken", "==", server.id)
-      .where("name", "==", "general")
-      .onSnapshot(({docs}) => {
-      const generalChannelId = docs[0].id
-      setServersJSX(serversJSX.concat(<ServerAvatar key={server.id} serverEmoji={server.emoji} serverID={server.id} channelToken={generalChannelId}/>))   
-      setLoading()   
-    })
-  }
-
   useEffect(() => {
     getUsersServers()
-  }, [user.id])
+  }, [])
 
   useEffect(() => {
-    setCurrentServer(servers.filter((server) => server.id === serverToken)[0])
+    if (serverToken) {
+      fireDb.collection('servers').doc(serverToken).get().then((server) => {
+        dispatch(updateServer({
+          id: serverToken,
+          name: server.data()!.name,
+          avatar: server.data()!.avatar
+        }))
+      })  
+    }
+     
   }, [serverToken])
 
   return (
@@ -70,7 +71,11 @@ const Sidebar: FC<Props> = ({ setCurrentServer, setLoading }) => {
       </Link>
       <div className="border-divider"></div>
 
-      { serversJSX }
+      { 
+        servers.map((server, idx) => (
+          <ServerAvatar key={idx} name={server.name} avatar={server.avatar} generalId={server.generalId} serverId={server.id}/>
+        ))
+      }
 
       <div className="add-server-btn" onClick={() => setModalIsOpen(true)}>
         <svg aria-hidden="false" width="24" height="24" viewBox="0 0 24 24"><path fill="#43b581" d="M20 11.1111H12.8889V4H11.1111V11.1111H4V12.8889H11.1111V20H12.8889V12.8889H20V11.1111Z"></path></svg>

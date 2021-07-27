@@ -20,6 +20,9 @@ const StyledServerSettingsView = styled.div`
     max-width: 680px;
     height: 100%;
     box-sizing: border-box;
+    padding-left: 40px;
+    padding-top: 60px;
+    
 
   }
 

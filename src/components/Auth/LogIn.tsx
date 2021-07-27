@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { config, fireDb, auth } from '../../utils/firebase'
+import { config, fireDb, auth, realDb } from '../../utils/firebase'
 import { useHistory, Link } from 'react-router-dom'
 import { LogInStyled } from '.'
 import splashImage from './splash.png'
@@ -28,18 +28,33 @@ const LogIn: FC = () => {
       .where('members', 'array-contains', userId)
       .onSnapshot(({ docs }) => { 
         const serverId = docs[0].id
-        getGeneralId(serverId) 
+        getGeneralId(serverId, userId) 
       })
     }
   }
 
-  const getGeneralId = (serverId: string) => {
+  const getGeneralId = (serverId: string, userId: string) => {
     fireDb.collection('channels')
       .where("serverToken", "==", serverId)
       .where("name", "==", "general")
       .onSnapshot(({docs}) => {
       const generalChannelId = docs[0].id
-      history.push(`/server/${serverId}/${generalChannelId}`)        
+      updateUserStatus2(userId)       
+      history.push(`/server/${serverId}/${generalChannelId}`) 
+    })
+  }
+
+  const updateUserStatus = (userId: string) => {
+    const newMessage = realDb.ref("usersStatus").push(userId)
+    newMessage.set({
+      userId: "abcdefgh",
+      userStatus: "Online"
+    })
+  }
+
+  const updateUserStatus2 = (userId: string) => {
+    fireDb.collection('users').doc(userId).update({
+      status: "Online"
     })
   }
 

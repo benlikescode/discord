@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  id: "",
-  name: "",
-  email: "",
-  avatar: ""
+  id: '',
+  name: '',
+  email: '',
+  avatar: '',
+  status: ''
 }
 
 export const userSlice = createSlice({
@@ -16,9 +17,11 @@ export const userSlice = createSlice({
       state.name = action.payload.name
       state.email = action.payload.email || ''
       state.avatar = action.payload.avatar || ''
+      state.status = action.payload.status || ''
     },
     logOutUser: state => {
       state.id = ''
+      state.status = 'Offline'
     }
   }
 })

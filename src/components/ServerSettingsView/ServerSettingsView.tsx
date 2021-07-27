@@ -1,10 +1,12 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { StyledServerSettingsView } from '.'
 import { Roles, Overview } from './MainComponents'
 import { EditRoles } from './MainComponents/Roles/EditRoles'
 import { Sidebar } from './Sidebar'
 
 const ServerSettingsView: FC = () => {
+
+  const [currMainComponent, setCurrMainComponent] = useState(<Overview />)
 
   const deleteServer = () => {
     alert("SERVER DELETED")
@@ -13,11 +15,11 @@ const ServerSettingsView: FC = () => {
   return (
     <StyledServerSettingsView>
       <div className="sidebar">
-        <Sidebar serverName="Test Server" deleteServer={deleteServer}/>
+        <Sidebar serverName="Test Server" deleteServer={deleteServer} setCurrMainComponent={setCurrMainComponent}/>
       </div>
       <div className="main">
         <div className="mainContent">
-          <EditRoles />
+          { currMainComponent }
         </div>
       </div>
     </StyledServerSettingsView>

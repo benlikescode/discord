@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { StyledUserSettingsView } from '.'
 import { Button } from '../System'
 import { Avatar } from '../System/Avatar'
-import { config, fireDb, storage, auth } from '../../utils/firebase'
+import { config, fireDb, storage, auth, realDb } from '../../utils/firebase'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -41,10 +41,17 @@ const UserSettingsView: FC = () => {
   const logOut = () => {
     auth.signOut()
     .then(() => {
+      updateUserStatus()
       history.push('/login')
     })
     .catch((error) => {
       console.log(error)
+    })
+  }
+
+  const updateUserStatus = () => {
+    fireDb.collection('users').doc(user.id).update({
+      status: 'Offline'
     })
   }
 

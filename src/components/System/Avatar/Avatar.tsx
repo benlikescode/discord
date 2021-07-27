@@ -22,12 +22,8 @@ const Avatar: FC<Props> = ({ url, size, alt, status, onClick, userId }) => {
 
   return (
     <StyledAvatar size={size} status={status}>
-       {userId &&     
-        <Link to={`/home/direct/${userId}`}>               
-          <img src={currSrc || fallback} alt={alt} onError={() => setCurrSrc(fallback)} />      
-        </Link>
-      }
-      {!userId && <img src={currSrc || fallback} alt={alt} onError={() => setCurrSrc(fallback)} />}
+      <img src={currSrc || fallback} alt={alt} onError={() => setCurrSrc(fallback)} />
+      {status && <div className="status"></div>}        
     </StyledAvatar>
   )
 }
