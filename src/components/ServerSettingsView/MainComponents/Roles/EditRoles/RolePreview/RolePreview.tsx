@@ -30,11 +30,11 @@ const RolePreview: FC<Props> = ({ roleId, setActiveRole, activeRole }) => {
   }, [])
 
   return (
-    <StyledRolePreview roleColor={roleData.color} isActive={activeRole === roleId}>
+    <StyledRolePreview roleColor={roleData!.color} isActive={activeRole === roleId}>
       <div className="rolePreview" onClick={() => setActiveRole(roleId)}>
         <div className="circle"></div>
         <div className="roleName">
-          <span>{roleData.name}</span>
+          <span>{roleData!.name}</span>
         </div>
       </div>
     

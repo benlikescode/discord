@@ -1,5 +1,5 @@
 import { ChevronRightIcon, UsersIcon } from '@heroicons/react/outline'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { StyledRoles } from '.'
 import { Button, Icon } from '../../../System'
 import { Searchbar } from '../../../System/Searchbar'
@@ -23,6 +23,8 @@ interface ParamTypes {
 const Roles: FC<Props> = ({ setCurrMainComponent }) => {
   const server = useSelector(selectServer)
   const { serverToken } = useParams<ParamTypes>()
+  const [roleIds, setRoleIds] = useState<string[]>([])
+
 
   // for whatever reason, when refereshing the edit roles page when using server from redux, we get an error as if we lost the server state on refresh?...
 
@@ -31,15 +33,32 @@ const Roles: FC<Props> = ({ setCurrMainComponent }) => {
       color: '#99aab5',
       name: 'new role',
       permissions: ['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'],
-      rank: 100
+      rank: 100,
+      memberCount: 0
     })
     .then((role) => {
       fireDb.collection('servers').doc(serverToken).update({
         roles: firebase.firestore.FieldValue.arrayUnion(role.id)
       })
     })
+    goToEditRoles()
+  }
+
+  const goToEditRoles = () => {
     setCurrMainComponent(<EditRoles />)
   }
+
+  const loadRoles = () => {
+    fireDb.collection('servers').doc(serverToken).get()
+    .then((server) => {
+      const roleIds: string[] = server.data()!.roles
+      setRoleIds(roleIds)  
+    })
+  }
+
+  useEffect(() => {
+    loadRoles()
+  }, [])
 
  
 
@@ -78,10 +97,23 @@ const Roles: FC<Props> = ({ setCurrMainComponent }) => {
 
       <div className="roleList">
         <div className="roleListHeader">
-          <RoleItem roleName="Goat" roleColor="red" isLocked={true} memberCount={3}/>
-          <RoleItem roleName="Drug Lord" roleColor="blue" isLocked={false} memberCount={2}/>
-          <RoleItem roleName="Top Frag" roleColor="green" isLocked={false} memberCount={5}/>
-
+          <div className="dragSpacing"></div>
+          <div className="rolesCount">{`Roles - ${roleIds.length}`}</div>
+          <div className="membersLabel">Members</div>
+          <div className="buttonsSpacing"></div>
+        </div>
+        <div className="divider"></div>
+        <div className="roleListItems">
+          {
+            roleIds.map((roleId, idx) => (
+              <>
+                <div key={idx} className="roleItem" onClick={() => goToEditRoles()}>
+                  <RoleItem roleId={roleId}/>
+                </div>
+                <div className="divider"></div>
+              </>
+            ))
+          }  
         </div>
       </div>
     </StyledRoles>

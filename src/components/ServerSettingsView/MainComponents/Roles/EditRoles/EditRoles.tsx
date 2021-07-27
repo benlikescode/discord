@@ -43,7 +43,8 @@ const EditRoles: FC = () => {
       color: '#99aab5',
       name: 'new role',
       permissions: ['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'],
-      rank: 100
+      rank: 100,
+      memberCount: 0
     })
     .then((role) => {
       fireDb.collection('servers').doc(serverToken).update({
@@ -85,8 +86,8 @@ const EditRoles: FC = () => {
             <span>Top Frag</span>
           </div>
           <div className="tabBar">
-            <div className="tabBarItem">Display</div>
-            <div className="tabBarItem">Permissions</div>
+            <div className="tabBarItem ">Display</div>
+            <div className="tabBarItem tabBarItemActive">Permissions</div>
             <div className="tabBarItem">Manage Members (0)</div>
           </div>
         </div>

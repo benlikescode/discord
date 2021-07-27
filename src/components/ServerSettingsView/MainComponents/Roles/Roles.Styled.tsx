@@ -72,6 +72,50 @@ const StyledRoles = styled.div`
   .searchBar {
     flex: 1 1 auto;
   }
+
+  .roleList {
+    margin-top: 32px;
+  }
+
+  .roleListHeader {
+    margin-left: -32px;
+    margin-right: -8px;
+    padding-right: 8px;
+    display: flex;
+    margin-bottom: 8px;
+  }
+
+  .dragSpacing {
+    flex: 0 0 32px;
+  }
+
+  .rolesCount {
+    flex: 0 1 273px;
+    font-size: 12px;
+    color: #b9bbbe;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .membersLabel {
+    font-size: 12px;
+    color: #b9bbbe;
+    text-transform: uppercase;
+    font-weight: 700;
+    flex: 0 0 112px;
+    margin-left: 16px;
+    text-align: right;
+  }
+
+  .buttonsSpacing {
+    flex: 1 0 88px;
+    margin-left: 16px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #ffffff0f;
+  }
   
 `
 

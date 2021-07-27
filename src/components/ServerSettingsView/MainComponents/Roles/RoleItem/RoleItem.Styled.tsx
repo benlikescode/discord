@@ -7,15 +7,16 @@ const StyledRoleItem = styled.div`
   padding-top: 1px;
   height: 61px;
   cursor: pointer;
+  margin-left: -32px;
+  padding-right: 8px;
 
   :hover {
     background-color: #4f545c52;
   }
 
   .dragIcon {
-    padding: 8px;
     cursor: grab;
-    color: var(--interactive-normal);
+    color: #b9bbbe;
     visibility: hidden;
     flex: 0 0 32px;
   }
@@ -33,6 +34,9 @@ const StyledRoleItem = styled.div`
     justify-content: flex-end;
     height: 100%;
     color: #b9bbbe;
+    flex: 0 0 112px;
+    margin-left: 16px;
+    text-align: right;
   }
 
   .buttonsContainer {  
@@ -49,6 +53,15 @@ const StyledRoleItem = styled.div`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-left: 4px;
+  }
+
+  .shieldIcon {
+    margin-right: 10px;
+  }
+
+  .memberCount {
+    margin-right: 4px;
   }
 `
 

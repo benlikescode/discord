@@ -82,6 +82,10 @@ const StyledEditRoles = styled.div`
     margin-bottom: -2px;
   }
 
+  .tabBarItemActive {
+    border-bottom: 2px solid #5865f2;
+  }
+
   .colorPicker {
     margin-top: 24px;
 
