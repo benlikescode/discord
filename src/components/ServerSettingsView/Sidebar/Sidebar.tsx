@@ -1,8 +1,10 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StyledSidebar } from '.'
+import { DeleteServer } from '../../Modals'
 import { Button } from '../../System'
 import { Overview, Roles } from '../MainComponents'
+import { Modal } from '../../Modals'
 
 type Props = {
   serverName: string
@@ -11,6 +13,12 @@ type Props = {
 }
 
 const Sidebar: FC<Props> = ({ serverName, deleteServer, setCurrMainComponent }) => {
+
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const closeModal = () => {
+    setModalOpen(false)
+  }
 
   const handleButtonItemClick = (buttonItem: string) => {
     switch(buttonItem) {
@@ -23,6 +31,10 @@ const Sidebar: FC<Props> = ({ serverName, deleteServer, setCurrMainComponent }) 
       default:
         setCurrMainComponent(<Overview />)
     }
+  }
+
+  const handleDeleteServer = () => {
+    setModalOpen(true)
   }
 
   return (
@@ -45,7 +57,12 @@ const Sidebar: FC<Props> = ({ serverName, deleteServer, setCurrMainComponent }) 
         <div className="buttonItem" onClick={() => handleButtonItemClick("Bans")}>Bans</div>
       </div> 
       <div className="divider"></div>  
-      <div className="deleteServerButton">Delete Server</div>
+      <div className="deleteServerButton" onClick={() => handleDeleteServer()}>Delete Server</div>
+      {modalOpen && 
+        <Modal closeModal={closeModal}>
+          <DeleteServer closeModal={closeModal}/>
+        </Modal>
+      }
     </StyledSidebar>
   )
 }

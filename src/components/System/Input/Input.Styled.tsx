@@ -12,6 +12,7 @@ const StyledInput = styled.div`
     font-size: 12px;
     text-transform: uppercase;
   }
+
   .input-styled {
     height: 40px;
     display: flex;
@@ -37,6 +38,14 @@ const StyledInput = styled.div`
       } 
       
     }
+  }
+
+  .inputError {
+    color: #ED4245;
+    font-size: 12px;
+    line-height: 16px;
+    display: block;
+    margin-top: 8px;
   }
 `
 
