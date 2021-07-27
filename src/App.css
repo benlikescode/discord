@@ -64,3 +64,16 @@ button {
 a {
   text-decoration: none;
 }
+
+/* Custom Scrollbar */
+
+::-webkit-scrollbar {
+  width: 7px;
+  background: #2e3338;
+  border-radius: 50rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 50rem;
+}
