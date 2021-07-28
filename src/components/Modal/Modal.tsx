@@ -55,7 +55,9 @@ const Modal: FC<Props> = ( {closeModal, headerText, subHeadText, labelText, butt
       name: inputField,
       avatar: "",
       members: [user.id],
-      owner: user.id
+      owner: user.id,
+      roles: [],
+      banList: []
     })
     .then((server) => {
       addGeneralChannel(server)
