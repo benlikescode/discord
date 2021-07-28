@@ -30,6 +30,7 @@ const Sidebar: FC<Props> = ({ setLoading }) => {
     if (user.id) {
       fireDb.collection('servers')
       .where('members', 'array-contains', user.id)
+      .orderBy('createdAt', 'desc')
       .onSnapshot(({ docs }) => {
         let serverList: any = [] 
         docs.map((doc) => {

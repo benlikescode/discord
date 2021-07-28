@@ -8,6 +8,7 @@ type Server = {
   members?: string[]
   roles?: RoleType[]
   generalId?: string
+  createdAt?: number
 }
 
 export default Server

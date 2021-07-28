@@ -49,7 +49,8 @@ const Register: FC = () => {
       owner: userId,
       members: [userId],
       roles: [],
-      banList: []
+      banList: [],
+      createdAt: Date.now()
     })
     .then((thisServer) => {
       addGeneralChannel(thisServer)

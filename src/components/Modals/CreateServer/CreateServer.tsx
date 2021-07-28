@@ -24,7 +24,8 @@ const CreateServer: FC<Props> = ({ closeModal }) => {
       members: [user.id],
       owner: user.id,
       roles: [],
-      banList: []
+      banList: [],
+      createdAt: Date.now()
     })
     .then((server) => addGeneralChannel(server)) 
   }
