@@ -12,6 +12,7 @@ import { ServerDropdown } from '../ServerDropdown'
 import { ServerType, ChannelType } from '../../types/'
 import { selectServer } from '../../reducers/server'
 import { useSelector } from 'react-redux'
+import { UserControls } from '../UserControls'
 
 type Props = {
   setCurrentChannel: (channel: ChannelType) => void
@@ -145,7 +146,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
 
         <div className="user-info-footer">
           {
-            !inVoice &&
+            inVoice &&
             
             <div className="user-info-footer-top">
               <div className="user-info-footer-top1">
@@ -176,20 +177,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
             </div>
           }
           
-          <div className="user-info-footer-bottom">
-            <UserInfo/>
-            <div className="footerButtons">
-              <Button type="icon">
-                <Mute size={20}/>
-              </Button>
-              <Button type="icon">
-                <Deafen size={20}/>
-              </Button>
-              <Button type="icon" callback={() => handleUserSettingsClick()}>
-                <GearIcon size={20}/>          
-              </Button>
-            </div>
-          </div>
+          <UserControls />
           
         </div>
 

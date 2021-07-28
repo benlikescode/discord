@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { DirectMessageType } from '../../types'
 import { Button } from '../System'
 import { useHistory } from 'react-router-dom'
+import { UserControls } from '../UserControls'
 
 type Props = {
   setCurrentDirectName?: any
@@ -87,11 +88,10 @@ const HomeSidebar: FC<Props> = ({ setCurrentDirectName }) => {
         
       </div>
 
-      <div className="userInfoWrapper">
-        <div className="userInfo">
-          <UserInfo/>
-        </div>
+      <div className="user-info-footer">
+        <UserControls />
       </div>
+
     
     </StyledHomeSidebar>
   )

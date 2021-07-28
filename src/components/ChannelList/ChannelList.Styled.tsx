@@ -25,9 +25,6 @@ const ChannelStyled = styled.div`
     width: 208px;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
   }
 
   .announcements-channel {
@@ -112,26 +109,10 @@ const ChannelStyled = styled.div`
     padding: 2px 16px;
     height: 38px;
     width: 100%;
-  }
 
-  .server-invite-btn:hover {
-    background-color: #677bc4;
-  }
-
-  .log-out-btn {
-    color: #fff;
-    background-color: #36393f;
-    outline: none;
-    border: none;
-    border-radius: 3px;
-    height: 25px;
-    padding: 2px 8px;
-    font-size: 14px;
-    font-weight: 400;
-  }
-
-  .log-out-btn:hover {
-    background-color: #677bc4;
+    :hover {
+      background-color: #677bc4;
+    }
   }
 
   .delete-channel-btn {
@@ -147,13 +128,6 @@ const ChannelStyled = styled.div`
     height: 73px;
     border-bottom: 1px solid #36393f;
     box-sizing: border-box;
-  }
-
-  .user-info-footer-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 40px;
   }
 
   .user-info-footer-top1 {
@@ -192,7 +166,6 @@ const ChannelStyled = styled.div`
   }
 
   .user-info-footer-top2 {
-
     display: flex;
     gap: 10px;
 
@@ -214,17 +187,8 @@ const ChannelStyled = styled.div`
         align-items: center;
         justify-content: space-between;
       }
-    }
-    
+    }   
   }
-
-  .footerButtons {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-
 `
 
 export default ChannelStyled

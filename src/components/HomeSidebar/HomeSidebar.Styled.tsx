@@ -33,30 +33,14 @@ const StyledHomeSidebar = styled.div`
     }
   }
 
-  .logoutButton {
-    color: #fff;
-    background-color: #36393f;
-    outline: none;
-    border: none;
-    border-radius: 3px;
-    height: 25px;
-    padding: 2px 8px;
-    font-size: 14px;
-    font-weight: 400;
-  }
-
-  .logoutButton:hover {
-    background-color: #677bc4;
-  }
-
-  .userInfo {
+  .directMessageItem {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 40px;
   }
-
-  .userInfoWrapper {
+  
+  .user-info-footer {
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -65,14 +49,6 @@ const StyledHomeSidebar = styled.div`
     background-color: #292b2f;
     z-index: 999;
   }
-
-  .directMessageItem {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
 `
 
 export default StyledHomeSidebar
