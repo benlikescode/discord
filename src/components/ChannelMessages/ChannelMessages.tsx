@@ -5,13 +5,13 @@ import { ChannelMessagesStyled } from '.'
 import { FlexBox } from '../FlexBox'
 import { AtIcon, HashTag, HelpIcon, MemberList } from '../Icon'
 import { Message } from '../Message'
-import { Channel } from '../ChannelList'
 import { NewMessage } from '../NewMessage'
 import { HelpModal } from '../HelpModal'
 import { MemberSidebar } from '../MemberSidebar'
+import { ChannelType } from '../../types'
 
 type Props = {
-  currentChannel?: Channel | undefined
+  currentChannel?: ChannelType | undefined
   type: 'channelMessages' | 'directMessages'
   currentDirectName?: string
 }

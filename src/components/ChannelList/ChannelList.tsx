@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { config, fireDb } from '../../utils/firebase'
 import { useParams, useHistory } from 'react-router-dom'
-import { ChannelStyled, Channel } from '.'
+import { ChannelStyled } from '.'
 import { Deafen, DisconnectIcon, GearIcon, Mute, PingIcon, PlusIcon, ScreenIcon, VideoIcon, VoiceIcon } from '../Icon'
 import { Modal, CreateChannel, Invite } from '../Modals'
 import { ChannelButton } from '../ChannelButton'
@@ -9,12 +9,12 @@ import { UserInfo } from '../UserInfo'
 import { Button, Icon } from '../System'
 import { ChevronDownIcon, XIcon } from '@heroicons/react/outline'
 import { ServerDropdown } from '../ServerDropdown'
-import { ServerType } from '../../types/'
+import { ServerType, ChannelType } from '../../types/'
 import { selectServer } from '../../reducers/server'
 import { useSelector } from 'react-redux'
 
 type Props = {
-  setCurrentChannel: (channel: Channel) => void
+  setCurrentChannel: (channel: ChannelType) => void
   toggleVideoGrid: any
   //setCurrentVoiceChannel: (channel: Channel) => void
 }
@@ -48,11 +48,12 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
     if (serverToken !== '') {
       fireDb.collection('channels')
       .where('serverToken', '==', serverToken)
+      .orderBy('createdAt', 'asc')
       .onSnapshot(({ docs }) => {
         const channelList = docs.map((doc) => ({
           id: doc.id,
           ...doc.data()
-        })) as Channel[]
+        })) as ChannelType[]
 
         let channelJSX: JSX.Element[] = []
 
@@ -75,7 +76,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
         const voiceChannelList = docs.map((doc) => ({
           id: doc.id,
           ...doc.data()
-        })) as Channel[]
+        })) as ChannelType[]
 
         let voiceChannelJSX: JSX.Element[] = []
 

@@ -32,7 +32,8 @@ const CreateServer: FC<Props> = ({ closeModal }) => {
   const addGeneralChannel = (server: any) => {
     fireDb.collection("channels").add({
       name: "general",
-      serverToken: server.id
+      serverToken: server.id,
+      createdAt: Date.now()
     })
     .then((channel) => {
       fireDb.collection('servers').doc(server.id).update({generalId: channel.id})

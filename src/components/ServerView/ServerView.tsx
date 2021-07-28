@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { BrowserRouter as Router, Route, Switch, useParams, useHistory } from 'react-router-dom'
 import routeList from '../../utils/routes'
 import { ServerViewStyled } from '.'
-import { Channel, ChannelList } from '../ChannelList'
+import { ChannelList } from '../ChannelList'
 import { ChannelMessages } from '../ChannelMessages'
 import { Sidebar } from '../Sidebar'
 import { config, fireDb } from '../../utils/firebase'
@@ -10,7 +10,7 @@ import { Splash } from '../Splash'
 import { VideoGrid } from '../VideoGrid'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
-import { ServerType } from '../../types'
+import { ServerType, ChannelType } from '../../types'
 
 interface ParamTypes {
   serverToken: string
@@ -18,8 +18,8 @@ interface ParamTypes {
 
 const ServerView: FC = () => {
   const history = useHistory()
-  const [currentChannel, setCurrentChannel] = useState<Channel>()
-  const [currentVoiceChannel, setCurrentVoiceChannel] = useState<Channel>()
+  const [currentChannel, setCurrentChannel] = useState<ChannelType>()
+  const [currentVoiceChannel, setCurrentVoiceChannel] = useState<ChannelType>()
   const [loading, setLoading] = useState(true)
   const { serverToken } = useParams<ParamTypes>()
   const [isVideo, setIsVideo] = useState(false)

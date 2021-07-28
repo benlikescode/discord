@@ -2,14 +2,14 @@ import React, { FC, useEffect, useState } from 'react'
 import { ChannelButtonStyled } from '.'
 import { FlexBox } from '../FlexBox'
 import { ExitIcon, HashTag, VoiceIcon } from '../Icon'
-import { Channel } from '../ChannelList/index'
 import { useHistory, useParams } from 'react-router-dom'
 import { config, fireDb } from '../../utils/firebase'
+import { ChannelType } from '../../types'
 //import { webRTCHandler } from '../../utils/helperFunctions'
 
 type Props = {
-  channel: Channel
-  callBack?: (channel: Channel) => void
+  channel: ChannelType
+  callBack?: (channel: ChannelType) => void
   channelType: string
 }
 
@@ -28,7 +28,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
   const [peerConnection, setPeerConnection]: any = useState(null)
   const [roomId, setroomId]: any = useState(null)
 
-  const goToChannel = (channel: Channel) => {
+  const goToChannel = (channel: ChannelType) => {
     callBack && callBack(channel)
     channelType === 'text' ? 
     history.push(`/server/${channel.serverToken}/${channel.id}`) :
@@ -39,7 +39,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     }
   }
 
-  const deleteChannel = (channel: Channel) => {
+  const deleteChannel = (channel: ChannelType) => {
     if (channel.name !== "general") {
       fireDb.collection("channels").doc(channel.id).delete()
     }

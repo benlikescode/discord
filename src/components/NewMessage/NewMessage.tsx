@@ -1,13 +1,14 @@
 import React, { FC, useState, createRef, KeyboardEvent, useEffect } from 'react'
 import { config, realDb } from '../../utils/firebase'
 import { NewMessageStyled } from '.'
-import { Channel } from '../ChannelList'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
+import { ChannelType } from '../../types'
+
 
 type Props = {
   channelToken: string
-  currentChannel?: Channel | undefined
+  currentChannel?: ChannelType | undefined
 }
 
 const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => { 

@@ -62,7 +62,8 @@ const Register: FC = () => {
   const addGeneralChannel = (server: any) => {
     fireDb.collection("channels").add({
       name: "general",
-      serverToken: server.id
+      serverToken: server.id,
+      createdAt: Date.now()
     })
     .then((thisChannel) => {
       fireDb.collection('servers').doc(server.id).update({generalId: thisChannel.id})

@@ -22,7 +22,8 @@ const CreateChannel: FC<Props> = ({ closeModal }) => {
     const channelName = inputVal.replaceAll(' ', '-').toLowerCase()
     fireDb.collection("channels").add({
       name: channelName,
-      serverToken: serverToken
+      serverToken: serverToken,
+      createdAt: Date.now()
     })
     .then(() => closeModal())
   }
