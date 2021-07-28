@@ -11,7 +11,7 @@ const StyledKick = styled.div`
 
   .content {
     padding: 0 16px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
   }
 
   .warningLabel {
