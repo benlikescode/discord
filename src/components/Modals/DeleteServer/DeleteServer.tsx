@@ -48,7 +48,13 @@ const DeleteServer: FC<Props> = ({ closeModal }) => {
         />
       </div>
       
-      <ModalFooter cancelLabel="Cancel" actionLabel="Delete Server" actionCallback={deleteServer} closeModal={closeModal}/>
+      <ModalFooter 
+        cancelLabel="Cancel" 
+        actionLabel="Delete Server" 
+        actionCallback={deleteServer} 
+        closeModal={closeModal}
+        actionPrimaryColor="#ED4245"
+      />
     </StyledDeleteServer>
   )
 }

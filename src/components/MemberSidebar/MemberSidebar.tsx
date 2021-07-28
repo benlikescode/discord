@@ -6,11 +6,9 @@ import { useParams } from 'react-router-dom'
 import { UserInfo } from '../UserInfo'
 import { UserType } from '../../types'
 import { UserModifyPopout } from '../UserModifyPopout'
-import { Modal } from '../Modals'
+import { Modal, Kick, Ban } from '../Modals'
 import { Popout } from '../Popouts/Popout'
 import useWindowDimensions from '../../utils/customHooks/useWindowDimensions'
-import { Kick } from '../Modals/Kick'
-import { Ban } from '../Modals/Ban'
 
 interface ParamTypes {
   serverToken: string

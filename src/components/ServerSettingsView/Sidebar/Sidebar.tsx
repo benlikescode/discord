@@ -1,10 +1,9 @@
 import { FC, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StyledSidebar } from '.'
-import { DeleteServer } from '../../Modals'
 import { Button } from '../../System'
 import { Overview, Roles } from '../MainComponents'
-import { Modal } from '../../Modals'
+import { Modal, DeleteServer } from '../../Modals'
 
 type Props = {
   serverName: string

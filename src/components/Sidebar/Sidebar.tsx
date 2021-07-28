@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { config, fireDb } from '../../utils/firebase'
 import { Link, useParams } from 'react-router-dom'
 import { SidebarStyled, ServerAvatar } from '.'
-import { Modal } from '../Modal'
+import { Modal, CreateServer } from '../Modals'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
 import { ServerType } from '../../types'
@@ -82,14 +82,9 @@ const Sidebar: FC<Props> = ({ setLoading }) => {
       </div>
 
       {modalIsOpen &&
-        <Modal 
-        closeModal={closeModal} 
-        headerText={"Customize your server"}
-        subHeadText={"Give your new server a personality with a name. You can always change it later."}
-        labelText={"SERVER NAME"}
-        buttonText={"Create"}
-        modalFunction={"server"}
-        />
+        <Modal closeModal={closeModal}>
+          <CreateServer closeModal={closeModal}/>
+        </Modal>        
       }
       
     </SidebarStyled>

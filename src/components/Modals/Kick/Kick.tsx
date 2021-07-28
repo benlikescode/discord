@@ -27,7 +27,13 @@ const Kick: FC<Props> = ({ closeModal, userId }) => {
         </div>
         <Textarea label="Reason For Kick" maxLength={512} callback={setKickMessage} value={kickMessage}/> 
       </div>
-      <ModalFooter closeModal={closeModal} actionLabel="Kick" cancelLabel="Cancel" actionCallback={handleKick}/>
+      <ModalFooter 
+        closeModal={closeModal} 
+        actionLabel="Kick" 
+        cancelLabel="Cancel" 
+        actionCallback={handleKick}
+        actionPrimaryColor="#ED4245"
+      />
     </StyledKick>
   )
 }

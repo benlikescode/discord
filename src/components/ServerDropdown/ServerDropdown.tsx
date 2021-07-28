@@ -1,7 +1,6 @@
 import { FC, useState } from 'react'
 import { StyledServerDropdown } from '.'
 import { Boost } from '../Icon'
-import { Modal } from '../Modal'
 import { Button, Icon } from '../System'
 import { createInviteLink } from '../../utils/helperFunctions'
 import { Link, useParams } from 'react-router-dom' 

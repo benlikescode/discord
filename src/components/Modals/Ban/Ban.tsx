@@ -36,7 +36,13 @@ const Ban: FC<Props> = ({ closeModal, userId }) => {
         </div>
         <Textarea label="Reason For Ban" maxLength={512} callback={setBanMessage} value={banMessage}/> 
       </div>
-      <ModalFooter closeModal={closeModal} actionLabel="Ban" cancelLabel="Cancel" actionCallback={handleBan}/>
+      <ModalFooter 
+        closeModal={closeModal} 
+        actionLabel="Ban" 
+        cancelLabel="Cancel" 
+        actionCallback={handleBan}
+        actionPrimaryColor="#ED4245"
+      />
     </StyledBan>
   )
 }

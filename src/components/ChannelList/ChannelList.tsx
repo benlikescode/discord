@@ -3,9 +3,8 @@ import { config, fireDb } from '../../utils/firebase'
 import { useParams, useHistory } from 'react-router-dom'
 import { ChannelStyled, Channel } from '.'
 import { Deafen, DisconnectIcon, GearIcon, Mute, PingIcon, PlusIcon, ScreenIcon, VideoIcon, VoiceIcon } from '../Icon'
-import { Modal } from '../Modal'
+import { Modal, CreateChannel, Invite } from '../Modals'
 import { ChannelButton } from '../ChannelButton'
-import { createInviteLink } from '../../utils/helperFunctions'
 import { UserInfo } from '../UserInfo'
 import { Button, Icon } from '../System'
 import { ChevronDownIcon, XIcon } from '@heroicons/react/outline'
@@ -194,26 +193,16 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
         </div>
 
         {channelModalOpen &&
-          <Modal 
-          closeModal={ closeModal }
-          headerText={"Create Text Channel"}
-          labelText={"CHANNEL NAME"}
-          buttonText={"Create Channel"}
-          serverToken={serverToken}
-          modalFunction={"textChannel"}
-          />
+          <Modal closeModal={closeModal}>
+            <CreateChannel closeModal={closeModal}/>
+          </Modal>      
         }
-
         {inviteModalOpen &&
-          <Modal 
-          closeModal={ closeModal } 
-          headerText={`Invite Friends To Server`}
-          labelText={"SEND THIS INVITE LINK TO A FRIEND"}
-          buttonText={"Copy"}
-          modalFunction={"invite"}
-          inviteLink={ createInviteLink() }
-          />
+          <Modal closeModal={closeModal}>
+            <Invite closeModal={closeModal}/>
+          </Modal>      
         }
+       
       </div>
       {serverDropdownOpen && <ServerDropdown setServerDropdownOpen={setServerDropdownOpen}/>}
     </ChannelStyled>
