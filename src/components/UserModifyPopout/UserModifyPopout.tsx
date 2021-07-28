@@ -9,9 +9,10 @@ type Props = {
   cursorY: number
   closePopout: any
   setKickModalOpen: any
+  setBanModalOpen: any
 }
 
-const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, setKickModalOpen }) => {
+const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, setKickModalOpen, setBanModalOpen }) => {
   const history = useHistory()
 
   const handleMessage = () => {
@@ -36,7 +37,7 @@ const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, se
   }
 
   const handleBan= () => {
-    console.log("Pussy")
+    setBanModalOpen(true)
     closePopout()
   }
 

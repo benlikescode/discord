@@ -10,6 +10,7 @@ import { Modal } from '../Modals'
 import { Popout } from '../Popouts/Popout'
 import useWindowDimensions from '../../utils/customHooks/useWindowDimensions'
 import { Kick } from '../Modals/Kick'
+import { Ban } from '../Modals/Ban'
 
 interface ParamTypes {
   serverToken: string
@@ -26,9 +27,11 @@ const MemberSidebar: FC = () => {
   const POPOUTHEIGHT = 204
 
   const [kickModalOpen, setKickModalOpen] = useState(false)
+  const [banModalOpen, setBankModalOpen] = useState(false)
 
   const closeModal = () => {
     setKickModalOpen(false)
+    setBankModalOpen(false)
   }
 
   const getServer = () => {
@@ -73,8 +76,7 @@ const MemberSidebar: FC = () => {
     }
     else {
       setYpos(e.pageY)
-    }
-    
+    } 
     setPopoutOpen(true)
   }
   
@@ -97,13 +99,19 @@ const MemberSidebar: FC = () => {
       </div>
       {popoutOpen && 
         <Popout closePopout={closePopout}>
-          <UserModifyPopout userId="13" cursorX={xpos} cursorY={ypos} closePopout={closePopout} setKickModalOpen={setKickModalOpen}/>
+          <UserModifyPopout userId="13" cursorX={xpos} cursorY={ypos} closePopout={closePopout} setKickModalOpen={setKickModalOpen} setBanModalOpen={setBankModalOpen}/>
         </Popout>
       }
       {
         kickModalOpen &&
         <Modal closeModal={closeModal}>
           <Kick closeModal={closeModal} userId="13"/>
+        </Modal>
+      }
+      {
+        banModalOpen &&
+        <Modal closeModal={closeModal}>
+          <Ban closeModal={closeModal} userId="maY5O1I4zDf4L1qRn6sObKp6NfP2"/>
         </Modal>
       }
      
