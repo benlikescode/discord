@@ -13,6 +13,7 @@ import { ServerType, ChannelType } from '../../types/'
 import { selectServer } from '../../reducers/server'
 import { useSelector } from 'react-redux'
 import { UserControls } from '../UserControls'
+import { Popout } from '../Popouts/Popout'
 
 type Props = {
   setCurrentChannel: (channel: ChannelType) => void
@@ -39,10 +40,6 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   const closeModal = () => {
     setInviteModalOpen(false) 
     setChannelModalOpen(false)
-  }
-
-  const handleUserSettingsClick = () => {
-    history.push('/settings')
   }
 
   const loadChannels = () => {
@@ -91,6 +88,10 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
 
   const handleServerDropdown = () => {
     setServerDropdownOpen(!serverDropdownOpen);
+  }
+
+  const closePopout = () => {
+    setServerDropdownOpen(false)
   }
 
   useEffect(() => {
@@ -193,7 +194,15 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
         }
        
       </div>
-      {serverDropdownOpen && <ServerDropdown setServerDropdownOpen={setServerDropdownOpen}/>}
+      {serverDropdownOpen && 
+        <Popout closePopout={closePopout}>
+          <ServerDropdown 
+            setServerDropdownOpen={setServerDropdownOpen} 
+            setInviteOpen={setInviteModalOpen} 
+            setCreateChannelOpen={setChannelModalOpen}
+          />
+        </Popout>
+      }
     </ChannelStyled>
   )
 }

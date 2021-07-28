@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 type StyledProps = {
-  type: 'solid' | 'ghost' | 'icon' | 'closeButton' | 'blue' | 'icon2' | 'solid2'
+  type: 'solid' | 'ghost' | 'icon' | 'closeButton' | 'blue' | 'icon2' | 'solid2' | 'red'
   primaryColor?: string
   secondaryColor?: string
   isDisabled?: boolean
@@ -86,6 +86,20 @@ const StyledButton = styled.div<StyledProps>`
         font-size: 14px;
         padding: 2px 16px;
     `}
+    ${({ type, isDisabled }) => 
+    type === 'red' && 
+    !isDisabled && `
+      background-color: transparent;
+      color: #ED4245;
+      font-weight: 400;
+      font-size: 14px;
+      padding: 0 10px;
+
+      :hover {
+        background-color: #ED4245;
+        color: #fff;
+      }
+  `}
     ${({ type, isDisabled }) => 
       type === 'closeButton' && 
       !isDisabled && `

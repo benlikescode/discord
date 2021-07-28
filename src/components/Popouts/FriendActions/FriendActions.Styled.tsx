@@ -1,12 +1,17 @@
 import styled from 'styled-components'
 
-const StyledServerDropdown = styled.div`
+type StyledProps = {
+  cursorX: number
+  cursorY: number
+}
+
+const StyledFriendActions = styled.div<StyledProps>`
   background-color: #18191c;
   padding: 6px;
   width: 220px;
   position: absolute;
-  top: 55px;
-  left: 82px;
+  top: ${({ cursorY }) => cursorY}px;
+  left: ${({ cursorX }) => cursorX}px;
   border-radius: 4px;
   box-sizing: border-box;
   z-index: 9999999;
@@ -18,7 +23,6 @@ const StyledServerDropdown = styled.div`
     justify-content: space-between;
     width: 100%;
   }
-
 `
 
-export default StyledServerDropdown
+export default StyledFriendActions
