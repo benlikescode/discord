@@ -5,6 +5,11 @@ import firebase from 'firebase'
 import { useParams } from 'react-router-dom'
 import { UserInfo } from '../UserInfo'
 import { UserType } from '../../types'
+import { UserModifyPopout } from '../UserModifyPopout'
+import { Modal } from '../Modals'
+import { Popout } from '../Popouts/Popout'
+import useWindowDimensions from '../../utils/customHooks/useWindowDimensions'
+import { Kick } from '../Modals/Kick'
 
 interface ParamTypes {
   serverToken: string
@@ -13,6 +18,18 @@ interface ParamTypes {
 const MemberSidebar: FC = () => {
   const { serverToken } = useParams<ParamTypes>()
   const [members, setMembers] = useState<UserType[]>([])
+  const [popoutOpen, setPopoutOpen] = useState(false)
+  const [xpos, setXpos] = useState(0)
+  const [ypos, setYpos] = useState(0)
+  const { height, width } = useWindowDimensions()
+  const POPOUTWIDTH = 220
+  const POPOUTHEIGHT = 204
+
+  const [kickModalOpen, setKickModalOpen] = useState(false)
+
+  const closeModal = () => {
+    setKickModalOpen(false)
+  }
 
   const getServer = () => {
     fireDb.collection('servers').doc(serverToken).get()
@@ -37,6 +54,31 @@ const MemberSidebar: FC = () => {
     setMembers(usersList)
   }
 
+  const handleUserClick = (e: any) => {
+    // right click
+    if (e.which === 3) {
+      setPopoutOpen(true)
+    }
+  }
+
+  const closePopout = () => {
+    setPopoutOpen(false)
+  }
+
+  const handleContextMenu = (e: any) => {
+    e.preventDefault()     
+    setXpos(e.pageX - POPOUTWIDTH)
+    if (e.pageY > height - POPOUTHEIGHT) {
+      setYpos(height - POPOUTHEIGHT - 10)
+    }
+    else {
+      setYpos(e.pageY)
+    }
+    
+    setPopoutOpen(true)
+  }
+  
+
   useEffect(() => {
     getServer()
   }, [serverToken])
@@ -47,10 +89,24 @@ const MemberSidebar: FC = () => {
         <h2>Members</h2>
         <div className="members-grid">
           { members.map((member, idx) => (
-            <UserInfo key={idx} avatar={member.avatar} userName={member.name}/>
+            <div className="memberItem" onMouseDown={(e) => handleUserClick(e)} onContextMenu={(e) => handleContextMenu(e)}>
+              <UserInfo key={idx} avatar={member.avatar} userName={member.name}/>
+            </div>
           )) }
         </div>
       </div>
+      {popoutOpen && 
+        <Popout closePopout={closePopout}>
+          <UserModifyPopout userId="13" cursorX={xpos} cursorY={ypos} closePopout={closePopout} setKickModalOpen={setKickModalOpen}/>
+        </Popout>
+      }
+      {
+        kickModalOpen &&
+        <Modal closeModal={closeModal}>
+          <Kick closeModal={closeModal} userId="13"/>
+        </Modal>
+      }
+     
     </MemberSidebarStyled>
   )
 }
