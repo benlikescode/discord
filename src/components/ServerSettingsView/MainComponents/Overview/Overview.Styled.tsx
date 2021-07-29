@@ -21,6 +21,7 @@ const StyledOverview = styled.div`
     box-shadow: 0 2px 10px 0 rgb(0 0 0 / 20%);
     position: relative;
     margin-right: 50px;
+    flex-shrink: 0;
   }
 
   .avatarInput {
