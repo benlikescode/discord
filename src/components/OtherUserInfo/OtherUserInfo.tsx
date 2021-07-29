@@ -13,37 +13,26 @@ type Props = {
 
 const OtherUserInfo: FC<Props> = ({ userId }) => {
   const user = useSelector(selectUser)
-  const [otherUser, setOtherUser] = useState<any>()
+  const [otherUser, setOtherUser] = useState<any>({name: '', avatar: '', status: ''})
 
-  const getUserDetails = () => {
-    if (userId) {
-      let otherUser = {}
-      fireDb.collection('users').doc(userId).get().then((user) => {
-        otherUser = {
-          name: user.data()!.username,
-          avatar: user.data()!.avatarUrl,
-          status: user.data()!.status
-        }
-        
-      }).then((otherUser) =>     setOtherUser(otherUser) 
-      )
+  const getUserDetails = async () => {
+    const otherUser = await fireDb.collection('users').doc(userId).get()
+    const otherUserDetails = {
+      name: otherUser.data()!.username,
+      avatar: otherUser.data()!.avatarUrl,
+      status: otherUser.data()!.status
     }
-  
-    
-    
-
+    setOtherUser(otherUserDetails)
   }
 
   useEffect(() => {
-    
-      getUserDetails()
-    
+    getUserDetails()
   }, [userId])
 
   return (
     <StyledOtherUserInfo>
      <div className="user-profile-image">
-       <Avatar url="" size={30} status={otherUser.status}/>
+       <Avatar url={otherUser.avatar} size={30} status={otherUser.status}/>
       </div>
       <div className="user-name-wrapper">
         <span>{otherUser.name}</span>

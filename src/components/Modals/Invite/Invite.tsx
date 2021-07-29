@@ -1,9 +1,14 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { StyledInvite } from '.'
 import { ExitIcon } from '../../Icon'
 import { createInviteLink } from '../../../utils/helperFunctions'
 import { Button, Input, Searchbar } from '../../System'
 import { UserInfo } from '../../UserInfo'
+import { fireDb, realDb } from '../../../utils/firebase'
+import { selectUser } from '../../../reducers/user'
+import { useSelector } from 'react-redux'
+import { OtherUserInfo } from '../../OtherUserInfo'
+import { selectServer } from '../../../reducers/server'
 
 
 type Props = {
@@ -13,6 +18,9 @@ type Props = {
 const Invite: FC<Props> = ({ closeModal }) => {
   const [isCopied, setIsCopied] = useState(false)
   const [inviteLink, setInviteLink] = useState(createInviteLink())
+  const [friendsIds, setFriendIds] = useState<string[]>([])
+  const user = useSelector(selectUser)
+  const server = useSelector(selectServer)
 
 
   const copyInviteToClip = () => {
@@ -25,12 +33,50 @@ const Invite: FC<Props> = ({ closeModal }) => {
     setIsCopied(true)
   }
 
-  const CURRSERVER = "Test Server"
+  const handleInviteButton = async (otherUserId: string) => {
+    const thisUser = await fireDb.collection('users').doc(user.id).get()
+    const thisUsersDms = thisUser.data()!.dmIds
+    for (const dm of thisUsersDms) {
+      const currDmRef = await fireDb.collection('directMessages').doc(dm).get()
+      if (currDmRef.data()!.users.includes(otherUserId)) {
+        sendDMWithInvite(dm)
+      }
+    }
+  }
+
+  const sendDMWithInvite = async (DMId: string) => {
+    const newMessage = await realDb.ref(DMId).push()
+    newMessage.set({
+      user: user.name,
+      content: inviteLink,
+      date: Date().toString(),
+      avatar: user.avatar
+    })
+  }
+
+  const getFriends = async () => {
+    const thisUser = await fireDb.collection('users').doc(user.id).get()
+    let friendIds: string[] = thisUser.data()!.friends
+    // getting members of this server to filter out friends that are already in the server
+    const thisServer = await fireDb.collection('servers').doc(server.id).get()
+    const serverMemberIds: string[] = thisServer.data()!.members
+    const filteredFriends: string[] = []
+    for (const currId of friendIds) {
+      if (!serverMemberIds.includes(currId)) {
+        filteredFriends.push(currId)    
+      }
+    }
+    setFriendIds(filteredFriends)   
+  }
+
+  useEffect(() => {
+    getFriends()  
+  }, [])
 
   return (
     <StyledInvite>
       <div className="header">
-        <h2>{`Invite Friends To ${CURRSERVER}`}</h2>
+        <h2>{`Invite Friends To ${server.name}`}</h2>
         <Searchbar />
       </div>  
 
@@ -40,42 +86,16 @@ const Invite: FC<Props> = ({ closeModal }) => {
 
       <div className="friendsScroller">
         <div className="content">
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
-          <div className="contentItem">
-            <UserInfo userName="ben16" avatar="/images/defaultAvatarRed.png"/>
-            <button className="inviteButton">Invite</button>
-          </div>
+          {
+            friendsIds.map((id, idx) => (
+              <div className="contentItem" key={idx}>
+                <OtherUserInfo userId={id}/>
+                <button className="inviteButton" onClick={() => handleInviteButton(id)}>Invite</button>
+              </div>
+            ))
+          }
+          
+        
         </div>
       </div>
 

@@ -61,11 +61,17 @@ const AddFriendView: FC = () => {
         name: username,
         avatar: friendsAvatar
       }
-      await fireDb.collection('directMessages').add({
+      const dmRef = await fireDb.collection('directMessages').add({
         users: [friendsId, user.id],
         user1: user1,
         user2: user2
-      }) 
+      })
+      await fireDb.collection('users').doc(user.id).update({
+        dmIds: firebase.firestore.FieldValue.arrayUnion(dmRef.id)
+      })
+      await fireDb.collection('users').doc(friendsId).update({
+        dmIds: firebase.firestore.FieldValue.arrayUnion(dmRef.id)
+      })
     }
   }
 

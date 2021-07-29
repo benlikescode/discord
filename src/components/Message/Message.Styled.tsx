@@ -52,6 +52,14 @@ const MessageStyled = styled.div<StyledProps>`
     text-decoration: underline;
     cursor: pointer;
   }
+
+  .messageUrl {
+    color: #00AFF4;
+
+    :hover {
+      text-decoration: underline;
+    }
+  }
 `
 
 export default MessageStyled

@@ -46,7 +46,7 @@ export const formatDate = (dateRaw: string) => {
 export const createInviteLink = () => {
   const fullUrl = window.location.href
   const splitUrl = fullUrl.split('/')
-  const inviteUrl = splitUrl[2] + "/invite/" + splitUrl[4]
+  const inviteUrl = "http://" + splitUrl[2] + "/invite/" + splitUrl[4]
   return inviteUrl
 }
 /*

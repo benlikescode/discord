@@ -26,6 +26,18 @@ const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, userna
   const handleLeave = () => {
     setIsHovering(false);
   }
+
+  function isValidHttpUrl(string: string) {
+    let url;
+    
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
   
   return (
     <MessageStyled fullView={fullView}>
@@ -43,7 +55,9 @@ const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, userna
             </div>
           }
           <div className="message-info-body">
-            <span className="message-content">{ content }</span>
+            {
+              isValidHttpUrl(content) ? <a href={content} className="messageUrl">{content}</a> : <span className="message-content">{ content }</span>
+            }
           </div>
         </div>
         {isHovering && <MessageOptions messageId={id} editCallback={editCallback} deleteCallback={deleteCallback}/>} 
