@@ -52,7 +52,7 @@ const PeopleListItem: FC<Props> = ({ id, name, status, avatarUrl }) => {
       {
         popoutOpen &&
           <Popout closePopout={closePopout}>
-            <FriendActions cursorX={xpos} cursorY={ypos} userId="maY5O1I4zDf4L1qRn6sObKp6NfP2"/>
+            <FriendActions cursorX={xpos} cursorY={ypos} userId="jDjhrc7QEXMX7gZXAND1CXmKX3w2"/>
           </Popout>
       }
     </StyledPeopleListItem>

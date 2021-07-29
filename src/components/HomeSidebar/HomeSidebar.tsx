@@ -10,53 +10,27 @@ import { DirectMessageType } from '../../types'
 import { Button } from '../System'
 import { useHistory } from 'react-router-dom'
 import { UserControls } from '../UserControls'
+import { DirectMessageItem } from '../DirectMessageItem'
 
 type Props = {
   setCurrentDirectName?: any
 }
 
 const HomeSidebar: FC<Props> = ({ setCurrentDirectName }) => {
-  const [directMessages, setDirectMessages] = useState<DirectMessageType[]>([])
+  const [directMessageIds, setDirectMessageIds] = useState<string[]>([])
   const user = useSelector(selectUser)
   const history = useHistory()
 
   const loadDirectMessages = () => {
     fireDb.collection('directMessages').where('users', 'array-contains', user.id)
     .onSnapshot(({ docs }) => { 
-      let dms: DirectMessageType[] = []
-      docs.map((doc) => {
-        let newDM = null
-        if (doc.data().user1.name === user.name) {
-          newDM = {
-            id: doc.id,
-            name: doc.data().user2.name,
-            avatar: doc.data().user2.avatar,
-            status: doc.data().user2.status
-          } 
-        }
-        else {
-          newDM = {
-            id: doc.id,
-            name: doc.data().user1.name,
-            avatar: doc.data().user1.avatar,
-            status: doc.data().user1.status
-          }
-        }
-        dms.push(newDM)
-        // DIRECT MESSAGE COLLECTION DOES NOT HAVE PROPERTY STATUS GOING TO HAVE TO PROBABLY QUERY THE USER WHICH MEANS WE CAN JUST STORE THE IDS OF THE USERS IN DMS
-        console.log("BRUH" + newDM.status)
-
-      })
-      setDirectMessages(dms)
-       
+      let directIds: string[] = []
+      docs.map((doc) => directIds.push(doc.id))
+      setDirectMessageIds(directIds)    
     })
   }
 
-
-  const sendToDirectMessage = (directMessage: DirectMessageType) => {
-    setCurrentDirectName && setCurrentDirectName(directMessage.name)
-    history.push(`/direct/${directMessage.id}`)
-  }
+  
 
   useEffect(() => {
     loadDirectMessages()
@@ -75,15 +49,9 @@ const HomeSidebar: FC<Props> = ({ setCurrentDirectName }) => {
         </div>
 
         { 
-          directMessages.map((directMessage, idx) => (
-            <Button type="solid2" width="100%" callback={() => sendToDirectMessage(directMessage)}>
-              <div className="directMessageItem">
-                <UserInfo key={idx} userName={directMessage.name} avatar={directMessage.avatar} status={directMessage.status}/>
-                <ExitIcon size={16}/>
-              </div>       
-            </Button>
-          ))
-        
+          directMessageIds.map((id, idx) => (
+            <DirectMessageItem key={idx} directMessageId={id}/>
+          ))     
         }
         
       </div>

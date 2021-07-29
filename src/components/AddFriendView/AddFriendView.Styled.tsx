@@ -1,6 +1,10 @@
 import styled from 'styled-components'
 
-const StyledAddFriendView = styled.div`
+type StyledProps = {
+  messageColor: '#4FDC7C' | '#ED4245' | '#DCDDDE'
+}
+
+const StyledAddFriendView = styled.div<StyledProps>`
   background-color: #36393f;
   display: flex;
   flex: 1;
@@ -41,7 +45,7 @@ const StyledAddFriendView = styled.div`
     font-size: 14px;
     font-weight: 500;
     line-height: 17px;
-    color: #dcddde;
+    color: ${({ messageColor }) => messageColor};
   }
   
 `

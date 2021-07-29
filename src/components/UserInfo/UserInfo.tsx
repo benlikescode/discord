@@ -8,7 +8,7 @@ import { Avatar } from '../System/Avatar'
 type Props = {
   avatar?: string
   userName?: string
-  status?: 'Online' | 'Offline' | 'Away' | 'Busy'
+  status?: 'Online' | 'Offline' | 'Idle' | 'Busy'
 }
 
 const UserInfo: FC<Props> = ({ avatar, userName, status }) => {

@@ -5,65 +5,85 @@ import { Input } from '../System/Input'
 import { config, fireDb } from '../../utils/firebase'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
+import firebase from 'firebase'
+import { useHistory } from 'react-router-dom'
 
 const AddFriendView: FC = () => {
   const user = useSelector(selectUser)
   const [username, setUsername] = useState("")
+  const history = useHistory()
+  const [message, setMessage] = useState("")
 
-  const sendFriendRequest = () => {
-    // adds your id to the other users friends array
+  // adds your id to the other users friends array
+  const sendFriendRequest = async () => {
     if (user.id) {
-      fireDb.collection('users')
-      .where('username', '==', username)
-      .limit(1)
-      .get()
-      .then((query) => {
-        const thing = query.docs[0]
-        const friends = thing.data().friends
-        const newVal = friends.concat(user.id)
-        thing.ref.update({friends: newVal})   
-        addToOurFriends(thing.id, thing.data().avatarUrl)
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      })      
+      const query = await fireDb.collection('users').where('username', '==', username).limit(1).get() 
+      const otherUser = query.docs[0]
+      const areAlreadyFriends = await alreadyFriends(otherUser.id)
+      const isThisUser = (otherUser.id === user.id)
+      
+      if (!areAlreadyFriends) {
+        if (!isThisUser) {
+          otherUser.ref.update({
+            friends: firebase.firestore.FieldValue.arrayUnion(user.id),
+            directMessages: firebase.firestore.FieldValue.arrayUnion(user.id)
+          })
+          addToOurFriends(otherUser.id, otherUser.data().avatarUrl)
+        }
+        else {
+          setMessage("You can't add yourself silly!")
+        }       
+      }  
+      else {
+        setMessage("You're already friends with that user!")
+      }              
     }
   }
 
-  const addToOurFriends = (friendsId: string, friendsAvatar: string) => {
-    fireDb.collection('users').doc(user.id).get()
-      .then((query) => {
-        const friends = query.data()!.friends
-        const newFriends = friends.concat(friendsId)
-        query.ref.update({friends: newFriends})
-        createDirectMessage(friendsId, friendsAvatar)
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      })
+  const addToOurFriends = async (friendsId: string, friendsAvatar: string) => {
+    const alreadyHasDM = await alreadyHasDirectMessage(friendsId)
+    await fireDb.collection('users').doc(user.id).update({
+      friends: firebase.firestore.FieldValue.arrayUnion(friendsId),
+      directMessages: firebase.firestore.FieldValue.arrayUnion(friendsId)
+    })
+    setMessage(`Success! Your friend request to ${username} was sent.`)
+    createDirectMessage(friendsId, friendsAvatar, alreadyHasDM)
   }
 
-  const createDirectMessage = (friendsId: string, friendsAvatar: string) => {
-    const user1 = {
-      name: user.name,
-      avatar: user.avatar
+  const createDirectMessage = async (friendsId: string, friendsAvatar: string, alreadyHasDM: boolean) => {
+    console.log(alreadyHasDM)
+    if (!alreadyHasDM) {
+      const user1 = {
+        name: user.name,
+        avatar: user.avatar
+      }
+      const user2 = {
+        name: username,
+        avatar: friendsAvatar
+      }
+      await fireDb.collection('directMessages').add({
+        users: [friendsId, user.id],
+        user1: user1,
+        user2: user2
+      }) 
     }
-    const user2 = {
-      name: username,
-      avatar: friendsAvatar
-    }
-    fireDb.collection('directMessages').add({
-      users: [friendsId, user.id],
-      user1: user1,
-      user2: user2
-    }) 
+  }
+
+  const alreadyFriends = async (otherUserId: string) => {
+    const thisUser = await fireDb.collection('users').doc(user.id).get()
+    return thisUser.data()!.friends.includes(otherUserId)
+  }
+
+  const alreadyHasDirectMessage = async (otherUserId: string) => {
+    const thisUser = await fireDb.collection('users').doc(user.id).get()
+    return thisUser.data()!.directMessages.includes(otherUserId)
   }
 
   return (
-    <StyledAddFriendView>
+    <StyledAddFriendView messageColor={message ? (message[0] === 'Y' ? '#ED4245' : '#4FDC7C') : '#DCDDDE'}>
       <div className="addFriendWrapper">
         <h2 className="header">Add Friend</h2>
-        <div className="description">You can add a friend with their Discord Tag. It's cAsE sEnSitIvE!</div>
+        <div className="description">{message ? message : "You can add a friend with their Discord Tag. It's cAsE sEnSitIvE!"}</div>
         <div className="inputForm">
           <Input placeholder="Enter a Username" type="text" callback={setUsername} value={username}/>
           <Button type="blue" callback={() => sendFriendRequest()}>Send Friend Request</Button>
