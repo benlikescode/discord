@@ -35,7 +35,8 @@ const Register: FC = () => {
       username: username,
       friends: [],
       avatarUrl: avatar,
-      status: "Online"
+      status: "Online",
+      directMessages: []
     })
     .catch((error) => {
       console.log("Error writing document:", error)

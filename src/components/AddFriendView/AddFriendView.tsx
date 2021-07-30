@@ -18,25 +18,32 @@ const AddFriendView: FC = () => {
   const sendFriendRequest = async () => {
     if (user.id) {
       const query = await fireDb.collection('users').where('username', '==', username).limit(1).get() 
-      const otherUser = query.docs[0]
-      const areAlreadyFriends = await alreadyFriends(otherUser.id)
-      const isThisUser = (otherUser.id === user.id)
+      if (query.size !== 0) {
+        const otherUser = query.docs[0]
+        const areAlreadyFriends = await alreadyFriends(otherUser.id)
+        const isThisUser = (otherUser.id === user.id)
       
-      if (!areAlreadyFriends) {
-        if (!isThisUser) {
-          otherUser.ref.update({
-            friends: firebase.firestore.FieldValue.arrayUnion(user.id),
-            directMessages: firebase.firestore.FieldValue.arrayUnion(user.id)
-          })
-          addToOurFriends(otherUser.id, otherUser.data().avatarUrl)
-        }
+        if (!areAlreadyFriends) {
+
+          if (!isThisUser) {
+            otherUser.ref.update({
+              friends: firebase.firestore.FieldValue.arrayUnion(user.id),
+              directMessages: firebase.firestore.FieldValue.arrayUnion(user.id)
+            })
+            addToOurFriends(otherUser.id, otherUser.data().avatarUrl)
+          }
+          else {
+            setMessage("You can't add yourself silly!")
+          }  
+
+        }  
         else {
-          setMessage("You can't add yourself silly!")
-        }       
-      }  
+          setMessage("You're already friends with that user!")
+        } 
+      }
       else {
-        setMessage("You're already friends with that user!")
-      }              
+        setMessage("Hm, didn't work. Double check that the capitalization, spelling, any spaces, and numbers are correct.")
+      }                 
     }
   }
 
@@ -51,7 +58,6 @@ const AddFriendView: FC = () => {
   }
 
   const createDirectMessage = async (friendsId: string, friendsAvatar: string, alreadyHasDM: boolean) => {
-    console.log(alreadyHasDM)
     if (!alreadyHasDM) {
       const user1 = {
         name: user.name,
@@ -86,7 +92,7 @@ const AddFriendView: FC = () => {
   }
 
   return (
-    <StyledAddFriendView messageColor={message ? (message[0] === 'Y' ? '#ED4245' : '#4FDC7C') : '#DCDDDE'}>
+    <StyledAddFriendView messageColor={message ? ((message[0] === 'Y' || message[0] === 'H') ? '#ED4245' : '#4FDC7C') : '#DCDDDE'}>
       <div className="addFriendWrapper">
         <h2 className="header">Add Friend</h2>
         <div className="description">{message ? message : "You can add a friend with their Discord Tag. It's cAsE sEnSitIvE!"}</div>
