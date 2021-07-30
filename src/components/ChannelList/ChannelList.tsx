@@ -14,6 +14,7 @@ import { selectServer } from '../../reducers/server'
 import { useSelector } from 'react-redux'
 import { UserControls } from '../UserControls'
 import { Popout } from '../Popouts/Popout'
+import { hangUp } from '../../utils/WebRTC/handlers'
 
 type Props = {
   setCurrentChannel: (channel: ChannelType) => void
@@ -79,7 +80,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
         let voiceChannelJSX: JSX.Element[] = []
 
         voiceChannelList.map((channel, index) => {
-          voiceChannelJSX.push( <ChannelButton key={index} channel={channel} channelType="voice"/> )
+          voiceChannelJSX.push( <ChannelButton key={index} channel={channel} channelType="voice" setInVoice={setInVoice}/> )
         })
         setVoiceChannelsJSX(voiceChannelJSX)
       })
@@ -155,7 +156,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
                   <PingIcon size={16}/>
                   <span>Voice Connected</span>
                 </div>
-                <button>
+                <button onClick={hangUp}>
                   <DisconnectIcon size={20}/>
                 </button>
               </div>
