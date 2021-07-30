@@ -8,12 +8,13 @@ type Props = {
   actionCallback: any
   closeModal: any
   actionPrimaryColor: '#ED4245' | '#7289da'
+  isActionDisabled?: boolean
 }
 
-const ModalFooter: FC<Props> = ({ cancelLabel, actionLabel, actionCallback, closeModal, actionPrimaryColor }) => {
+const ModalFooter: FC<Props> = ({ cancelLabel, actionLabel, actionCallback, closeModal, actionPrimaryColor, isActionDisabled }) => {
   return (
     <StyledModalFooter>
-      <Button type="solid" primaryColor={actionPrimaryColor} secondaryColor="#fff" callback={() => actionCallback()}>{actionLabel}</Button>
+      <Button type="solid" primaryColor={actionPrimaryColor} secondaryColor="#fff" isDisabled={isActionDisabled} callback={() => actionCallback()}>{actionLabel}</Button>
       <button className="cancelButton" onClick={() => closeModal()}>{cancelLabel}</button>
     </StyledModalFooter>
   )

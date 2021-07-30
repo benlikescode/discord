@@ -64,6 +64,7 @@ const CreateServer: FC<Props> = ({ closeModal }) => {
         actionCallback={createServer} 
         closeModal={closeModal}
         actionPrimaryColor="#7289da"
+        isActionDisabled={inputVal === ''}
       />
     </StyledCreateServer>
   )

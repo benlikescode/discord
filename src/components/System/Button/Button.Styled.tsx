@@ -117,9 +117,17 @@ const StyledButton = styled.div<StyledProps>`
     `}
     ${({ isDisabled }) => 
       isDisabled && `
-        background-color: var(--gray-200);
-        color: var(--gray-500);
+        background-color: #5865f2;
+        color: #fff;
         pointer-events: none;
+        cursor: not-allowed;
+        opacity: .5;
+        font-weight: 400;
+        font-size: 14px;
+        padding: 2px 16px;
+        padding: 0 10px;
+        border-radius: 4px;
+
     `}
   }
   

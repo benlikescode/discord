@@ -48,6 +48,7 @@ const CreateChannel: FC<Props> = ({ closeModal }) => {
         actionCallback={createChannel} 
         closeModal={closeModal}
         actionPrimaryColor="#7289da"
+        isActionDisabled={inputVal === ''}
       />
     </StyledCreateChannel>
   )
