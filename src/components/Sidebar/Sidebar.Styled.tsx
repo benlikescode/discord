@@ -6,6 +6,8 @@ const SidebarStyled = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: sticky;
+  top: 0;
 
   .add-server-btn {
     margin: 12px 12px 0 12px;

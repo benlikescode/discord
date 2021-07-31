@@ -9,7 +9,8 @@ import { config, fireDb } from '../../utils/firebase'
 import { Splash } from '../Splash'
 import { VideoGrid } from '../VideoGrid'
 import { selectUser } from '../../reducers/user'
-import { useSelector } from 'react-redux'
+import { updateServer } from '../../reducers/server'
+import { useDispatch, useSelector } from 'react-redux'
 import { ServerType, ChannelType } from '../../types'
 
 interface ParamTypes {
@@ -23,6 +24,7 @@ const ServerView: FC = () => {
   const [loading, setLoading] = useState(true)
   const { serverToken } = useParams<ParamTypes>()
   const [isVideo, setIsVideo] = useState(false)
+  const dispatch = useDispatch()
   const user = useSelector(selectUser)
 
   // Gets current users servers and checks if they are a member of the current server path, if not they are redirected to the home page
@@ -46,9 +48,22 @@ const ServerView: FC = () => {
     checkIfUserInThisServer()
   }, [user.id])
 
+  useEffect(() => {
+    console.log(serverToken)
+    if (serverToken) {
+      fireDb.collection('servers').doc(serverToken).get().then((server) => {
+        dispatch(updateServer({
+          id: serverToken,
+          name: server.data()!.name,
+          avatar: server.data()!.avatar
+        }))
+      })  
+    }
+     
+  }, [serverToken])
+
   return (
     <ServerViewStyled>
-      <Sidebar setLoading={() => setLoading(false)}/>
       <ChannelList 
         setCurrentChannel={(channel) => setCurrentChannel(channel)} 
         toggleVideoGrid={toggleVideoGrid} 

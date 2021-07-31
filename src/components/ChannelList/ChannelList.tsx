@@ -15,6 +15,8 @@ import { useSelector } from 'react-redux'
 import { UserControls } from '../UserControls'
 import { Popout } from '../Popouts/Popout'
 import { hangUp } from '../../utils/WebRTC/handlers'
+import { selectVoice } from '../../reducers/voice'
+import { VoiceChannelButton } from '../VoiceChannelButton'
 
 type Props = {
   setCurrentChannel: (channel: ChannelType) => void
@@ -22,31 +24,29 @@ type Props = {
   //setCurrentVoiceChannel: (channel: Channel) => void
 }
 
-interface ParamTypes {
-  serverToken: string
-  channelToken: string
-}
-
 const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   const history = useHistory()
   const [channelsJSX, setChannelsJSX] = useState<JSX.Element[]>([])
   const [voiceChannelsJSX, setVoiceChannelsJSX] = useState<JSX.Element[]>([])
-  const { serverToken, channelToken } = useParams<ParamTypes>()
+  const { channelToken }: any = useParams()
   const [channelModalOpen, setChannelModalOpen] = useState(false)
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
-  const [inVoice, setInVoice] = useState(false)
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false)
-  const currentServer = useSelector(selectServer)
+  const [currVCMembers, setCurrVCMembers] = useState<string[]>([])
+  
+  const server = useSelector(selectServer)
+  const voice = useSelector(selectVoice)
 
   const closeModal = () => {
     setInviteModalOpen(false) 
     setChannelModalOpen(false)
   }
+  
 
   const loadChannels = () => {
-    if (serverToken !== '') {
+    if (server.id !== '') {
       fireDb.collection('channels')
-      .where('serverToken', '==', serverToken)
+      .where('serverToken', '==', server.id)
       .orderBy('createdAt', 'asc')
       .onSnapshot(({ docs }) => {
         const channelList = docs.map((doc) => ({
@@ -68,9 +68,9 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   }
 
   const loadVoiceChannels = () => {
-    if (serverToken !== '') {
+    if (server.id !== '') {
       fireDb.collection('voiceChannels')
-      .where('serverToken', '==', serverToken)
+      .where('serverToken', '==', server.id)
       .onSnapshot(({ docs }) => {
         const voiceChannelList = docs.map((doc) => ({
           id: doc.id,
@@ -80,15 +80,24 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
         let voiceChannelJSX: JSX.Element[] = []
 
         voiceChannelList.map((channel, index) => {
-          voiceChannelJSX.push( <ChannelButton key={index} channel={channel} channelType="voice" setInVoice={setInVoice}/> )
+          voiceChannelJSX.push( <VoiceChannelButton channel={channel}/> )
         })
         setVoiceChannelsJSX(voiceChannelJSX)
       })
     }
   }
 
+  
+
   const handleServerDropdown = () => {
     setServerDropdownOpen(!serverDropdownOpen);
+  }
+
+  const handleVoiceDisconnect = async () => {
+    if (voice.id) {
+      console.log("WE GOT AN ID")
+      await hangUp(voice.id)
+    }
   }
 
   const closePopout = () => {
@@ -98,13 +107,15 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   useEffect(() => {
     loadChannels()
     loadVoiceChannels()
-  }, [serverToken])
+  }, [server.id])
+
+  
 
   return (
     <ChannelStyled>
       <div className="channel-list">
         <div className="channel-list-navbar">
-          <span className="server-name">{ currentServer!.name }</span>
+          <span className="server-name">{ server!.name }</span>
           <Button type="icon" callback={() => handleServerDropdown()}>
             {serverDropdownOpen ? 
               <Icon size={16} fill="#fff"><XIcon /></Icon>           
@@ -148,7 +159,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
 
         <div className="user-info-footer">
           {
-            inVoice &&
+            voice.inVoice &&
             
             <div className="user-info-footer-top">
               <div className="user-info-footer-top1">
@@ -156,7 +167,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
                   <PingIcon size={16}/>
                   <span>Voice Connected</span>
                 </div>
-                <button onClick={hangUp}>
+                <button className="disconnectButton" onClick={() => handleVoiceDisconnect()}>
                   <DisconnectIcon size={20}/>
                 </button>
               </div>

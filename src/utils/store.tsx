@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from '../reducers/user'
 import serverReducer from '../reducers/server'
+import voiceReducer from '../reducers/voice'
+import channelReducer from '../reducers/channel'
 
 const store = configureStore({
   reducer: {
     user: userReducer,
-    server: serverReducer
+    server: serverReducer, 
+    channel: channelReducer,
+    voice: voiceReducer
   }
 })
 

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { ChannelButtonStyled } from '.'
+import { StyledVoiceChannelButton } from '.'
 import { FlexBox } from '../FlexBox'
 import { ExitIcon, HashTag, VoiceIcon } from '../Icon'
 import { useHistory, useParams } from 'react-router-dom'
@@ -10,11 +10,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectVoice, updateVoice } from '../../reducers/voice'
 import firebase from 'firebase'
 import { selectUser } from '../../reducers/user'
+import { OtherUserInfo } from '../OtherUserInfo'
+import { VoiceChannelUser } from '../VoiceChannelUser'
 
 type Props = {
   channel: ChannelType
   callBack?: (channel: ChannelType) => void
-  channelType: 'voice' | 'text'
 }
 
 interface ParamTypes {
@@ -22,34 +23,30 @@ interface ParamTypes {
   channelToken: string
 }
 
-const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
+const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
   const history = useHistory()
   const [active, setActive] = useState(false)
   const { serverToken, channelToken } = useParams<ParamTypes>()
   const [remoteStream, setRemoteStream]: any = useState(null)
   const [localStream, setLocalStream]: any = useState(null)
+  const [vcMembers, setVCMembers] = useState<string[]>([])
 
   const dispatch = useDispatch()
   const voice = useSelector(selectVoice)
   const user = useSelector(selectUser)
-
-
-  const goToTextChannel = (channel: ChannelType) => {
-    callBack && callBack(channel)  
-    history.push(`/server/${channel.serverToken}/${channel.id}`) 
-  }
 
   const goToVoiceChannel = async () => {
     await localStreamInit(setLocalStream)
     remoteStreamInit(setRemoteStream)
     
     const voiceChannelRef = fireDb.collection('voiceChannels').doc(channel.id)
-    dispatch(updateVoice({id: channel.id, inVoice: true}))
-
-
     const voiceChannel = await voiceChannelRef.get()
     const vcMembers: string[] = voiceChannel.data()!.members
     const callToken = voiceChannel.data()!.callToken
+
+    dispatch(updateVoice({id: callToken, inVoice: true}))
+    setVCMembers(vcMembers)
+
     if (vcMembers.length === 0) {
       await createCall(channel.id)
     }
@@ -61,6 +58,13 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     })
   }
 
+  const getCurrVCMembers = async () => { 
+    const currVC = await fireDb.collection('voiceChannels').doc(channel.id).get()
+    const memberIds: string[] = currVC.data()!.members
+    setVCMembers(memberIds)  
+  }
+
+  // change this to delete a VC
   const deleteChannel = (channel: ChannelType) => {
     if (channel.name !== "general") {
       fireDb.collection("channels").doc(channel.id).delete()
@@ -87,14 +91,18 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     handleMute()
   }, [voice])
 
+  useEffect(() => {
+    getCurrVCMembers()
+  }, [serverToken])
+
   return (
-    <ChannelButtonStyled>
+    <StyledVoiceChannelButton>
       <button 
-        onClick={() => channelType === 'text' ? goToTextChannel(channel) : goToVoiceChannel() } 
+        onClick={() => goToVoiceChannel()} 
         className={`text-channel-wrapper ${active ? 'active' : ''}`}
       >
         <FlexBox>
-          {channelType === "text" ? <HashTag size={20} /> : <VoiceIcon size={20}/>}
+          <VoiceIcon size={20}/>
           <span className="text-channel-name">{ channel.name }</span>
         </FlexBox>
         
@@ -108,18 +116,25 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
           </FlexBox>
         </div>
       </button>
-   
-        { channelType === "voice" &&
-          <div>
-            <audio id="localAudio"></audio>
-            <audio id="remoteAudio"></audio>
-          </div>         
-        }   
-    </ChannelButtonStyled>
+
+      <div className="vcUserList">
+        { vcMembers &&
+          vcMembers.map((vcMember, idx) => (
+            <VoiceChannelUser key={idx} userId={vcMember}/>
+          ))
+        }
+      </div>
+      
+       
+      <div>
+        <audio id="localAudio"></audio>
+        <audio id="remoteAudio"></audio>
+      </div>         
+    </StyledVoiceChannelButton>
   )
 }
 
-export default ChannelButton
+export default VoiceChannelButton
 
 {/*
   <video muted autoPlay playsInline id="localAudio" height={200} width={200}></video>

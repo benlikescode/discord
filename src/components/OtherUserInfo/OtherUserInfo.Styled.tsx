@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const StyledOtherUserInfo = styled.div`
-display: flex;
+  display: flex;
   align-items: center;
 
   .user-profile-image {

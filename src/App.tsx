@@ -13,6 +13,7 @@ import { UserSettingsView } from './components/UserSettingsView'
 import { useDispatch } from 'react-redux'
 import { updateUser, logOutUser } from './reducers/user'
 import { DirectMessageView } from './components/DirectMessageView'
+import { AppLayout } from './components/AppLayout'
 
 const App: FC = () => {
   const dispatch = useDispatch()
@@ -45,12 +46,14 @@ const App: FC = () => {
         <Route path={routeList.app.invite} component={InviteView}/>
         <Route path={routeList.app.settings} component={ServerSettingsView}/>
         <Route path={routeList.app.userSettings} component={UserSettingsView}/>
+        <Route exact path={routeList.app.landingPage} component={LandingPage} />
 
         <Route path="*">
-          <Route exact path={routeList.app.landingPage} component={LandingPage} />
-          <Route path={routeList.app.channel} component={ServerView} />
-          <Route path={routeList.app.home} component={HomeView} />
-          <Route path={routeList.app.directMessages} component={DirectMessageView} />
+          <AppLayout>
+              <Route path={routeList.app.channel} component={ServerView} />
+              <Route path={routeList.app.home} component={HomeView} />
+              <Route path={routeList.app.directMessages} component={DirectMessageView} />
+          </AppLayout>
         </Route>
       </Switch>
     </Router>

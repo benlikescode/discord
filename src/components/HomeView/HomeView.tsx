@@ -7,7 +7,8 @@ import { HomeSidebar } from '../HomeSidebar'
 import { HomePeopleList } from '../HomePeopleList'
 import { Button } from '../System'
 import { AddFriendView } from '../AddFriendView'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateServer } from '../../reducers/server'
 import { selectUser } from '../../reducers/user'
 import { ServerType } from '../../types'
 
@@ -18,6 +19,7 @@ const HomeView: FC = () => {
   const [friendIds, setFriendIds] = useState<string[]>([])
   const [currView, setCurrView] = useState(<HomePeopleList onlineCount={4} friendIds={friendIds}/>)
   const user = useSelector(selectUser)
+  const dispatch = useDispatch()
 
   const loadPeople = () => {
     if (user.id) {
@@ -36,9 +38,16 @@ const HomeView: FC = () => {
     loadPeople()
   }, [])
 
+  useEffect(() => {
+    dispatch(updateServer({
+      id: '',
+      name: '',
+      avatar: ''
+    }))
+  }, [])
+
   return (
     <StyledHomeView>
-      <Sidebar setLoading={() => setLoading(false)} />
       <HomeSidebar />
       <div className="homeMainContainerWrapper">
         <div className="homeMainContainerNavbar">

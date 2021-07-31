@@ -17,7 +17,6 @@ const DirectMessageView: FC = () => {
 
   return (
     <StyledDirectMessageView>
-      <Sidebar setLoading={() => setLoading(false)} />
       <HomeSidebar setCurrentDirectName={(directName: string) => setCurrentDirectName(directName)} />
       <Switch>
         <Route exact path={routeList.app.directMessages} render={() => <ChannelMessages type="directMessages" currentDirectName={currentDirectName}/>}  />

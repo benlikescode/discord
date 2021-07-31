@@ -6,64 +6,40 @@ import { Modal, CreateServer } from '../Modals'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
 import { ServerType } from '../../types'
-import { updateServer } from '../../reducers/server'
+import { selectServer } from '../../reducers/server'
 
 type Props = {
-  setLoading: () => void
-}
-
-interface ParamTypes {
-  serverToken: string
+  setLoading?: () => void
 }
 
 const Sidebar: FC<Props> = ({ setLoading }) => {
-  const [servers, setServers] = useState<ServerType[]>([])
-  const [serversJSX, setServersJSX] = useState<JSX.Element[]>([])
-  const { serverToken } = useParams<ParamTypes>()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const closeModal = () => setModalIsOpen(false)
   const user = useSelector(selectUser)
-  const dispatch = useDispatch()
+  const server = useSelector(selectServer)
 
+  const [servers, setServers] = useState<ServerType[]>([])
+  const [currServer, setCurrServer] = useState(server.id)
 
-  const getUsersServers = () => {
-    if (user.id) {
-      fireDb.collection('servers')
+  useEffect(() => {
+    if (!user.id) {
+      return
+    }
+
+    return fireDb.collection('servers')
       .where('members', 'array-contains', user.id)
       .orderBy('createdAt', 'desc')
       .onSnapshot(({ docs }) => {
-        let serverList: any = [] 
-        docs.map((doc) => {
-          let currServer: ServerType = {
-            id: doc.id,
-            name: doc.data().name,
-            avatar: doc.data().avatar,
-            generalId: doc.data().generalId     
-          }
-          serverList.push(currServer)
-        })   
-        setServers(serverList)       
-        
+        setServers(docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id
+        }) as ServerType))    
       })
-    }
-  }
+  }, [user])
 
   useEffect(() => {
-    getUsersServers()
-  }, [])
-
-  useEffect(() => {
-    if (serverToken) {
-      fireDb.collection('servers').doc(serverToken).get().then((server) => {
-        dispatch(updateServer({
-          id: serverToken,
-          name: server.data()!.name,
-          avatar: server.data()!.avatar
-        }))
-      })  
-    }
-     
-  }, [serverToken])
+    setCurrServer(server.id)
+  }, [server.id])
 
   return (
     <SidebarStyled>
@@ -74,7 +50,12 @@ const Sidebar: FC<Props> = ({ setLoading }) => {
 
       { 
         servers.map((server, idx) => (
-          <ServerAvatar key={idx} name={server.name} avatar={server.avatar} generalId={server.generalId} serverId={server.id}/>
+          <ServerAvatar 
+            key={idx} 
+            server={server} 
+            isActive={currServer === server.id}
+            onClick={() => setCurrServer(server.id)}
+          />
         ))
       }
 

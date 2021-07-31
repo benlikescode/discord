@@ -35,8 +35,10 @@ const MemberSidebar: FC = () => {
   const getServer = () => {
     fireDb.collection('servers').doc(serverToken).get()
     .then((server) => {
-      const members: string[] = server.data()!.members
-      getMembers(members)
+      if ( server.data()) {
+        const members: string[] = server.data()!.members
+        getMembers(members)
+      }
     })
   }
 

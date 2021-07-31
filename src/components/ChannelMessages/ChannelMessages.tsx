@@ -11,7 +11,7 @@ import { MemberSidebar } from '../MemberSidebar'
 import { ChannelType } from '../../types'
 
 type Props = {
-  currentChannel?: ChannelType | undefined
+  currentChannel?: any
   type: 'channelMessages' | 'directMessages'
   currentDirectName?: string
 }
