@@ -3,8 +3,8 @@ import { StyledVoiceChannelButton } from '.'
 import { FlexBox } from '../FlexBox'
 import { ExitIcon, HashTag, VoiceIcon } from '../Icon'
 import { useHistory, useParams } from 'react-router-dom'
-import { config, fireDb } from '../../utils/firebase'
-import { ChannelType } from '../../types'
+import { fireDb } from '../../utils/firebase'
+import { ChannelType, VoiceChannelType } from '../../types'
 import { answerCall, createCall, localStreamInit, remoteStreamInit } from '../../utils/WebRTC/handlers'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectVoice, updateVoice } from '../../reducers/voice'
@@ -12,28 +12,23 @@ import firebase from 'firebase'
 import { selectUser } from '../../reducers/user'
 import { OtherUserInfo } from '../OtherUserInfo'
 import { VoiceChannelUser } from '../VoiceChannelUser'
+import { selectServer } from '../../reducers/server'
 
 type Props = {
-  channel: ChannelType
+  channel: VoiceChannelType
   callBack?: (channel: ChannelType) => void
-}
-
-interface ParamTypes {
-  serverToken: string
-  channelToken: string
 }
 
 const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
   const history = useHistory()
   const [active, setActive] = useState(false)
-  const { serverToken, channelToken } = useParams<ParamTypes>()
   const [remoteStream, setRemoteStream]: any = useState(null)
   const [localStream, setLocalStream]: any = useState(null)
-  const [vcMembers, setVCMembers] = useState<string[]>([])
 
   const dispatch = useDispatch()
   const voice = useSelector(selectVoice)
   const user = useSelector(selectUser)
+  const server = useSelector(selectServer)
 
   const goToVoiceChannel = async () => {
     await localStreamInit(setLocalStream)
@@ -44,8 +39,7 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
     const vcMembers: string[] = voiceChannel.data()!.members
     const callToken = voiceChannel.data()!.callToken
 
-    dispatch(updateVoice({id: callToken, inVoice: true}))
-    setVCMembers(vcMembers)
+    dispatch(updateVoice({id: callToken, voiceId: voiceChannel.id, inVoice: true}))
 
     if (vcMembers.length === 0) {
       await createCall(channel.id)
@@ -58,19 +52,6 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
     })
   }
 
-  const getCurrVCMembers = async () => { 
-    const currVC = await fireDb.collection('voiceChannels').doc(channel.id).get()
-    const memberIds: string[] = currVC.data()!.members
-    setVCMembers(memberIds)  
-  }
-
-  // change this to delete a VC
-  const deleteChannel = (channel: ChannelType) => {
-    if (channel.name !== "general") {
-      fireDb.collection("channels").doc(channel.id).delete()
-    }
-  }
-
   const handleMute = () => {
     if (localStream) {
       if (voice.isMuted) {
@@ -79,53 +60,30 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
       if (!voice.isMuted) {
         localStream.getAudioTracks()[0].enabled = true
       }
-    }
-    
+    }  
   }
-
-  useEffect(() => {
-    setActive(channel.id === channelToken)
-  }, [channel.id, channelToken])
 
   useEffect(() => {
     handleMute()
   }, [voice])
 
-  useEffect(() => {
-    getCurrVCMembers()
-  }, [serverToken])
-
   return (
     <StyledVoiceChannelButton>
-      <button 
-        onClick={() => goToVoiceChannel()} 
-        className={`text-channel-wrapper ${active ? 'active' : ''}`}
-      >
+      <button onClick={() => goToVoiceChannel()} className={`text-channel-wrapper`}>
         <FlexBox>
           <VoiceIcon size={20}/>
           <span className="text-channel-name">{ channel.name }</span>
-        </FlexBox>
-        
-        <div className="text-channel-btns">
-          <FlexBox>
-            { channel.name !== 'general' &&
-            <button onClick={() => deleteChannel(channel) } className="delete-channel-btn">
-              <ExitIcon size={16}/>
-            </button>
-            }
-          </FlexBox>
-        </div>
+        </FlexBox>  
       </button>
 
       <div className="vcUserList">
-        { vcMembers &&
-          vcMembers.map((vcMember, idx) => (
+        { channel.members &&
+          channel.members.map((vcMember, idx) => (
             <VoiceChannelUser key={idx} userId={vcMember}/>
           ))
         }
       </div>
-      
-       
+            
       <div>
         <audio id="localAudio"></audio>
         <audio id="remoteAudio"></audio>

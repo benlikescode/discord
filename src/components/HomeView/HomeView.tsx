@@ -1,7 +1,7 @@
 import { StyledHomeView } from '.'
 import React, { FC, useState, useEffect } from 'react'
 import { Sidebar } from '../Sidebar'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { Splash } from '../Splash'
 import { HomeSidebar } from '../HomeSidebar'
 import { HomePeopleList } from '../HomePeopleList'

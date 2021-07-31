@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { InviteViewStyled } from '.'
 import splashImage from './splash.png'
 import { useHistory, useParams } from 'react-router-dom'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
 

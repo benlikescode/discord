@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { config, fireDb, auth, realDb } from '../../utils/firebase'
+import { fireDb, auth, realDb } from '../../utils/firebase'
 import { useHistory, Link } from 'react-router-dom'
 import { LogInStyled } from '.'
 import splashImage from './splash.png'

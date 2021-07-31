@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { MemberSidebarStyled } from '.'
-import { config, fireDb } from '../../utils/firebase'
-import firebase from 'firebase'
+import { fireDb } from '../../utils/firebase'
 import { useParams } from 'react-router-dom'
 import { UserInfo } from '../UserInfo'
 import { UserType } from '../../types'
@@ -91,8 +90,8 @@ const MemberSidebar: FC = () => {
         <h2>Members</h2>
         <div className="members-grid">
           { members.map((member, idx) => (
-            <div className="memberItem" onMouseDown={(e) => handleUserClick(e)} onContextMenu={(e) => handleContextMenu(e)}>
-              <UserInfo key={idx} avatar={member.avatar} userName={member.name}/>
+            <div className="memberItem" onMouseDown={(e) => handleUserClick(e)} onContextMenu={(e) => handleContextMenu(e)} key={idx}>
+              <UserInfo avatar={member.avatar} userName={member.name}/>
             </div>
           )) }
         </div>

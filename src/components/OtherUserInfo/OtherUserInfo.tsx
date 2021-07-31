@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
 import { StyledOtherUserInfo } from '.'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
 import { Avatar } from '../System/Avatar'

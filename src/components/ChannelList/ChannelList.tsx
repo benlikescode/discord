@@ -1,15 +1,15 @@
 import React, { FC, useEffect, useState } from 'react'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { useParams, useHistory } from 'react-router-dom'
 import { ChannelStyled } from '.'
-import { Deafen, DisconnectIcon, GearIcon, Mute, PingIcon, PlusIcon, ScreenIcon, VideoIcon, VoiceIcon } from '../Icon'
+import { DisconnectIcon, PingIcon, PlusIcon, ScreenIcon, VideoIcon } from '../Icon'
 import { Modal, CreateChannel, Invite } from '../Modals'
 import { ChannelButton } from '../ChannelButton'
 import { UserInfo } from '../UserInfo'
 import { Button, Icon } from '../System'
 import { ChevronDownIcon, XIcon } from '@heroicons/react/outline'
 import { ServerDropdown } from '../ServerDropdown'
-import { ServerType, ChannelType } from '../../types/'
+import { ChannelType, VoiceChannelType } from '../../types/'
 import { selectServer } from '../../reducers/server'
 import { useSelector } from 'react-redux'
 import { UserControls } from '../UserControls'
@@ -17,6 +17,8 @@ import { Popout } from '../Popouts/Popout'
 import { hangUp } from '../../utils/WebRTC/handlers'
 import { selectVoice } from '../../reducers/voice'
 import { VoiceChannelButton } from '../VoiceChannelButton'
+import firebase from 'firebase'
+import { selectUser } from '../../reducers/user'
 
 type Props = {
   setCurrentChannel: (channel: ChannelType) => void
@@ -28,7 +30,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   const history = useHistory()
   const [channelsJSX, setChannelsJSX] = useState<JSX.Element[]>([])
   const [voiceChannelsJSX, setVoiceChannelsJSX] = useState<JSX.Element[]>([])
-  const { channelToken }: any = useParams()
+  const { channelToken, serverToken }: any = useParams()
   const [channelModalOpen, setChannelModalOpen] = useState(false)
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false)
@@ -36,6 +38,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   
   const server = useSelector(selectServer)
   const voice = useSelector(selectVoice)
+  const user = useSelector(selectUser)
 
   const closeModal = () => {
     setInviteModalOpen(false) 
@@ -44,9 +47,9 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   
 
   const loadChannels = () => {
-    if (server.id !== '') {
+    if (serverToken !== '') {
       fireDb.collection('channels')
-      .where('serverToken', '==', server.id)
+      .where('serverToken', '==', serverToken)
       .orderBy('createdAt', 'asc')
       .onSnapshot(({ docs }) => {
         const channelList = docs.map((doc) => ({
@@ -68,19 +71,19 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   }
 
   const loadVoiceChannels = () => {
-    if (server.id !== '') {
+    if (serverToken !== '') {
       fireDb.collection('voiceChannels')
-      .where('serverToken', '==', server.id)
+      .where('serverToken', '==', serverToken)
       .onSnapshot(({ docs }) => {
         const voiceChannelList = docs.map((doc) => ({
           id: doc.id,
           ...doc.data()
-        })) as ChannelType[]
+        })) as VoiceChannelType[]
 
         let voiceChannelJSX: JSX.Element[] = []
 
-        voiceChannelList.map((channel, index) => {
-          voiceChannelJSX.push( <VoiceChannelButton channel={channel}/> )
+        voiceChannelList.map((channel, idx) => {
+          voiceChannelJSX.push( <VoiceChannelButton key={idx} channel={channel}/> )
         })
         setVoiceChannelsJSX(voiceChannelJSX)
       })
@@ -94,10 +97,12 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   }
 
   const handleVoiceDisconnect = async () => {
-    if (voice.id) {
-      console.log("WE GOT AN ID")
+
       await hangUp(voice.id)
-    }
+      await fireDb.collection('voiceChannels').doc(voice.voiceId).update({
+        members: firebase.firestore.FieldValue.arrayRemove(user.id)
+      })
+    
   }
 
   const closePopout = () => {
@@ -107,7 +112,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   useEffect(() => {
     loadChannels()
     loadVoiceChannels()
-  }, [server.id])
+  }, [serverToken])
 
   
 

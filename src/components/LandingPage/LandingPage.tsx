@@ -9,7 +9,7 @@ import sectionImage2 from './SectionImage2.svg'
 import sectionImage3 from './SectionImage3.svg'
 import sectionImage4 from './SectionImage4.svg'
 import sectionImage5 from './SectionImage5.svg'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
 

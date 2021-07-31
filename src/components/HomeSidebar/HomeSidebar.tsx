@@ -1,6 +1,6 @@
 
 import React, { FC, useState, useEffect } from 'react'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { StyledHomeSidebar } from '.'
 import { DisconnectIcon, ExitIcon, PingIcon, PlusIcon, ScreenIcon, VideoIcon } from '../Icon'
 import { UserInfo } from '../UserInfo'

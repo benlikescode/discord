@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from 'react'
 import { StyledHomePeopleList } from '.'
 import { PeopleListItem } from './PeopleListItem'
 import { UserType } from '../../types/'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 
 type Props = {
   onlineCount: number
@@ -23,7 +23,6 @@ const HomePeopleList: FC<Props> = ({ onlineCount, friendIds }) => {
     friendIds.map((friendId) => {
       fireDb.collection('users').doc(friendId).get()
       .then((query) => {
-        //console.log("GLASS: " + query.data()!.name)
         const newUser: UserType = {
           id: query.id,
           name: query.data()!.username,

@@ -8,7 +8,7 @@ import { Register, LogIn } from './components/Auth'
 import { InviteView } from './components/InviteView'
 import { ServerSettingsView } from './components/ServerSettingsView'
 import { HomeView } from './components/HomeView'
-import { config, auth } from './utils/firebase'
+import { auth } from './utils/firebase'
 import { UserSettingsView } from './components/UserSettingsView'
 import { useDispatch } from 'react-redux'
 import { updateUser, logOutUser } from './reducers/user'
@@ -20,7 +20,6 @@ const App: FC = () => {
  
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
-      console.log("user is: ", authUser )
       if (authUser) {
         dispatch(
           updateUser({

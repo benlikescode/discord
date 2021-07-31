@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { Link, useParams } from 'react-router-dom'
 import { SidebarStyled, ServerAvatar } from '.'
 import { Modal, CreateServer } from '../Modals'

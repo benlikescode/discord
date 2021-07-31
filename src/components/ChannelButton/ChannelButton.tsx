@@ -3,7 +3,7 @@ import { ChannelButtonStyled } from '.'
 import { FlexBox } from '../FlexBox'
 import { ExitIcon, HashTag, VoiceIcon } from '../Icon'
 import { useHistory, useParams } from 'react-router-dom'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { ChannelType } from '../../types'
 import { answerCall, createCall, localStreamInit, remoteStreamInit } from '../../utils/WebRTC/handlers'
 import { useDispatch, useSelector } from 'react-redux'
@@ -101,9 +101,9 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
         <div className="text-channel-btns">
           <FlexBox>
             { channel.name !== 'general' &&
-            <button onClick={() => deleteChannel(channel) } className="delete-channel-btn">
+            <div onClick={() => deleteChannel(channel) } className="delete-channel-btn">
               <ExitIcon size={16}/>
-            </button>
+            </div>
             }
           </FlexBox>
         </div>

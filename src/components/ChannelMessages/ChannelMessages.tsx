@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, createRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { config, realDb } from '../../utils/firebase'
+import { realDb } from '../../utils/firebase'
 import { ChannelMessagesStyled } from '.'
 import { FlexBox } from '../FlexBox'
 import { AtIcon, HashTag, HelpIcon, MemberList } from '../Icon'
@@ -45,6 +45,7 @@ const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName })
       snapshot.forEach((snap) => {
         messageList.push(
           <Message 
+            key={snap.key}
             id={snap.key}
             deleteCallback={deleteMessage}
             editCallback={editMessage}

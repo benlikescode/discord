@@ -4,8 +4,7 @@ import routeList from '../../utils/routes'
 import { ServerViewStyled } from '.'
 import { ChannelList } from '../ChannelList'
 import { ChannelMessages } from '../ChannelMessages'
-import { Sidebar } from '../Sidebar'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { Splash } from '../Splash'
 import { VideoGrid } from '../VideoGrid'
 import { selectUser } from '../../reducers/user'
@@ -13,16 +12,12 @@ import { updateServer } from '../../reducers/server'
 import { useDispatch, useSelector } from 'react-redux'
 import { ServerType, ChannelType } from '../../types'
 
-interface ParamTypes {
-  serverToken: string
-}
-
 const ServerView: FC = () => {
   const history = useHistory()
   const [currentChannel, setCurrentChannel] = useState<ChannelType>()
   const [currentVoiceChannel, setCurrentVoiceChannel] = useState<ChannelType>()
   const [loading, setLoading] = useState(true)
-  const { serverToken } = useParams<ParamTypes>()
+  const { serverToken }: any = useParams()
   const [isVideo, setIsVideo] = useState(false)
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
@@ -49,7 +44,6 @@ const ServerView: FC = () => {
   }, [user.id])
 
   useEffect(() => {
-    console.log(serverToken)
     if (serverToken) {
       fireDb.collection('servers').doc(serverToken).get().then((server) => {
         dispatch(updateServer({

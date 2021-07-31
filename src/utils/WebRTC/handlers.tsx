@@ -105,7 +105,6 @@ export const answerCall = async (callId: string) => {
 
   offerCandidates.onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
-      console.log(change)
       if (change.type === 'added') {
         let data = change.doc.data()
         pc.addIceCandidate(new RTCIceCandidate(data))
@@ -147,5 +146,5 @@ export const hangUp = async (roomId: string) => {
     await roomRef.delete()
   }
   
-  window.location.reload() 
+  //window.location.reload() 
 }

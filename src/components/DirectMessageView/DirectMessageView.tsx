@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react'
 import { StyledDirectMessageView } from '.'
 import { Sidebar } from '../Sidebar'
-import { config, fireDb } from '../../utils/firebase'
+import { fireDb } from '../../utils/firebase'
 import { Splash } from '../Splash'
 import { HomeSidebar } from '../HomeSidebar'
 import { Route, Switch } from 'react-router-dom'

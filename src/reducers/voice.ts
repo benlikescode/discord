@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   id: '',
+  voiceId: '',
   inVoice: false,
   isMuted: false,
   isDeafened: false,
@@ -14,6 +15,7 @@ export const voiceSlice = createSlice({
   reducers: {
     updateVoice: (state, action) => {
       state.id = action.payload.id
+      state.voiceId = action.payload.voiceId
       state.inVoice = action.payload.inVoice
       state.isMuted = action.payload.isMuted
       state.isDeafened = action.payload.isDeafened
