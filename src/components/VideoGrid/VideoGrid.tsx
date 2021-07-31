@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useSelector } from 'react-redux'
 import { VideoGridStyled } from '.'
 import { selectUser } from '../../reducers/user'
-import { UserVideo } from '../../UserVideo'
+import { UserVideo } from '../UserVideo'
 
 const VideoGrid: FC = () => {
 

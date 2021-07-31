@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { StyledUserVideo } from '.'
-import { Avatar } from '../components/System'
+import { Avatar } from '../System'
 
 type Props = {
   avatarUrl?: string
