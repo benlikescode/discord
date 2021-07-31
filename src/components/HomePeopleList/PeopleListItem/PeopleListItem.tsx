@@ -1,21 +1,21 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { StyledPeopleListItem } from '.'
+import { fireDb } from '../../../utils/firebase'
 import { FriendActions } from '../../Popouts/FriendActions'
 import { Popout } from '../../Popouts/Popout'
 import { Button } from '../../System'
 import { Avatar } from '../../System/Avatar'
 
 type Props = {
-  id?: string
-  name: string
-  status?: 'Online' | 'Idle' | 'Busy' | 'Offline'
-  avatarUrl?: string
+  userId: string
 }
 
-const PeopleListItem: FC<Props> = ({ id, name, status, avatarUrl }) => {
+const PeopleListItem: FC<Props> = ({ userId }) => {
   const [popoutOpen, setPopoutOpen] = useState(false)
   const [xpos, setXpos] = useState(0)
   const [ypos, setYpos] = useState(0)
+  const [otherUser, setOtherUser] = useState<any>({name: '', avatar: '', status: ''})
+
 
   const closePopout = () => {
     setPopoutOpen(false)
@@ -28,16 +28,31 @@ const PeopleListItem: FC<Props> = ({ id, name, status, avatarUrl }) => {
     setPopoutOpen(true)
   }
 
+
+  const getUserDetails = async () => {
+    const otherUser = await fireDb.collection('users').doc(userId).get()
+    const otherUserDetails = {
+      name: otherUser.data()!.username,
+      avatar: otherUser.data()!.avatarUrl,
+      status: otherUser.data()!.status
+    }
+    setOtherUser(otherUserDetails)
+  }
+
+  useEffect(() => {
+    getUserDetails()
+  }, [userId])
+
   return (
     <StyledPeopleListItem>
       <div className="peopleListItem">
         <div className="userInfo">
           <div className="avatar">
-            {avatarUrl && <Avatar url={avatarUrl} status={status} alt={`${name}'s profile pic`} size={32}/>}
+            <Avatar url={otherUser.avatar} status={otherUser.status} alt={`${otherUser.name}'s profile pic`} size={32}/>
           </div>
           <div className="text">
-            <span className="name">{name}</span>
-            <span className="status">{status}</span>
+            <span className="name">{otherUser.name}</span>
+            <span className="status">{otherUser.status}</span>
           </div>
         </div>
         <div className="actions">

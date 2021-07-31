@@ -18,7 +18,7 @@ const ServerView: FC = () => {
   const [currentVoiceChannel, setCurrentVoiceChannel] = useState<ChannelType>()
   const [loading, setLoading] = useState(true)
   const { serverToken }: any = useParams()
-  const [isVideo, setIsVideo] = useState(false)
+  const [videoGridOpen, setVideoGridOpen] = useState(false)
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
 
@@ -36,7 +36,7 @@ const ServerView: FC = () => {
   }
 
   const toggleVideoGrid = () => {
-    setIsVideo(!isVideo)
+    setVideoGridOpen(!videoGridOpen)
   }
 
   useEffect(() => {
@@ -61,8 +61,9 @@ const ServerView: FC = () => {
       <ChannelList 
         setCurrentChannel={(channel) => setCurrentChannel(channel)} 
         toggleVideoGrid={toggleVideoGrid} 
+        videoGridOpen={videoGridOpen}
       />
-      {!isVideo ?
+      {!videoGridOpen ?
       <Switch>
         <Route exact path={routeList.app.channel} render={() => <ChannelMessages type="channelMessages" currentChannel={currentChannel} />}  />
       </Switch>

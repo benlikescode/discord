@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useRef } from 'react'
 import { StyledVoiceChannelButton } from '.'
 import { FlexBox } from '../FlexBox'
 import { ExitIcon, HashTag, VoiceIcon } from '../Icon'
@@ -13,6 +13,7 @@ import { selectUser } from '../../reducers/user'
 import { OtherUserInfo } from '../OtherUserInfo'
 import { VoiceChannelUser } from '../VoiceChannelUser'
 import { selectServer } from '../../reducers/server'
+import { useUserMedia } from '../../utils/customHooks/useUserMedia'
 
 type Props = {
   channel: VoiceChannelType
@@ -25,13 +26,23 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
   const [remoteStream, setRemoteStream]: any = useState(null)
   const [localStream, setLocalStream]: any = useState(null)
 
+  const localAudioRef = useRef<HTMLAudioElement>(null)
+  const remoteAudioRef = useRef<HTMLAudioElement>(null)
+
   const dispatch = useDispatch()
   const voice = useSelector(selectVoice)
   const user = useSelector(selectUser)
   const server = useSelector(selectServer)
 
+  const requestedMedia = {audio: true, video: false}
+  //const localStream = useUserMedia(requestedMedia)
+ 
+
   const goToVoiceChannel = async () => {
     await localStreamInit(setLocalStream)
+    //let myAudio = document.querySelector('#localAudio') as HTMLAudioElement
+    //myAudio.srcObject = localStream
+
     remoteStreamInit(setRemoteStream)
     
     const voiceChannelRef = fireDb.collection('voiceChannels').doc(channel.id)
@@ -52,6 +63,8 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
     })
   }
 
+  
+
   const handleMute = () => {
     if (localStream) {
       if (voice.isMuted) {
@@ -62,6 +75,7 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
       }
     }  
   }
+
 
   useEffect(() => {
     handleMute()
@@ -87,6 +101,7 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
       <div>
         <audio id="localAudio"></audio>
         <audio id="remoteAudio"></audio>
+
       </div>         
     </StyledVoiceChannelButton>
   )

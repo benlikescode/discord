@@ -8,13 +8,12 @@ import { UserModifyPopout } from '../UserModifyPopout'
 import { Modal, Kick, Ban } from '../Modals'
 import { Popout } from '../Popouts/Popout'
 import useWindowDimensions from '../../utils/customHooks/useWindowDimensions'
-
-interface ParamTypes {
-  serverToken: string
-}
+import { useSelector } from 'react-redux'
+import { selectServer } from '../../reducers/server'
+import { OtherUserInfo } from '../OtherUserInfo'
 
 const MemberSidebar: FC = () => {
-  const { serverToken } = useParams<ParamTypes>()
+  const { serverToken }: any = useParams()
   const [members, setMembers] = useState<UserType[]>([])
   const [popoutOpen, setPopoutOpen] = useState(false)
   const [xpos, setXpos] = useState(0)
@@ -26,34 +25,16 @@ const MemberSidebar: FC = () => {
   const [kickModalOpen, setKickModalOpen] = useState(false)
   const [banModalOpen, setBankModalOpen] = useState(false)
 
+  const [memberIds, setMemberIds] = useState<string[]>([])
+
   const closeModal = () => {
     setKickModalOpen(false)
     setBankModalOpen(false)
   }
 
-  const getServer = () => {
-    fireDb.collection('servers').doc(serverToken).get()
-    .then((server) => {
-      if ( server.data()) {
-        const members: string[] = server.data()!.members
-        getMembers(members)
-      }
-    })
-  }
-
-  const getMembers = (userIds: string[]) => {
-    let usersList: UserType[] = []
-    userIds.map((userId) => {
-      fireDb.collection('users').doc(userId).get() 
-      .then((user) => {
-        let newUser = {
-          name: user.data()!.username,
-          avatar: user.data()!.avatarUrl
-        }    
-        usersList.push(newUser)
-      })
-    })
-    setMembers(usersList)
+  const getServerMembers = async () => {
+    const server = await fireDb.collection('servers').doc(serverToken).get()
+    setMemberIds(server.data()!.members)
   }
 
   const handleUserClick = (e: any) => {
@@ -81,7 +62,7 @@ const MemberSidebar: FC = () => {
   
 
   useEffect(() => {
-    getServer()
+    getServerMembers()
   }, [serverToken])
 
   return (
@@ -89,9 +70,9 @@ const MemberSidebar: FC = () => {
       <div className="member-list-center">
         <h2>Members</h2>
         <div className="members-grid">
-          { members.map((member, idx) => (
+          { memberIds.map((memberId, idx) => (
             <div className="memberItem" onMouseDown={(e) => handleUserClick(e)} onContextMenu={(e) => handleContextMenu(e)} key={idx}>
-              <UserInfo avatar={member.avatar} userName={member.name}/>
+              <OtherUserInfo userId={memberId}/>
             </div>
           )) }
         </div>

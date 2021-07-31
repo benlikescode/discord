@@ -80,7 +80,8 @@ const Register: FC = () => {
   const addVoiceChannel = (serverToken: string) => {
     fireDb.collection("voiceChannels").add({
       name: "general",
-      serverToken: serverToken
+      serverToken: serverToken,
+      members: []
     })
   }
 

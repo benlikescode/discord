@@ -1,5 +1,5 @@
 import { StyledHomeView } from '.'
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, ReactNode } from 'react'
 import { Sidebar } from '../Sidebar'
 import { fireDb } from '../../utils/firebase'
 import { Splash } from '../Splash'
@@ -17,26 +17,20 @@ const HomeView: FC = () => {
   const [currentServer, setCurrentServer] = useState<ServerType>()
   const [currentUserName, setCurrentUserName] = useState("")
   const [friendIds, setFriendIds] = useState<string[]>([])
-  const [currView, setCurrView] = useState(<HomePeopleList onlineCount={4} friendIds={friendIds}/>)
+  const [currView, setCurrView] = useState<ReactNode>()
   const user = useSelector(selectUser)
   const dispatch = useDispatch()
 
-  const loadPeople = () => {
+  const loadPeople = async () => {
     if (user.id) {
-      fireDb.collection('users').doc(user.id).get()
-      .then((query) => {
-        const friends: string[] = query.data()!.friends
-        setFriendIds(friends)   
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      })
+      const thisUser = await fireDb.collection('users').doc(user.id).get()
+      setFriendIds(thisUser.data()!.friends)      
     }  
   }
 
   useEffect(() => {
     loadPeople()
-  }, [])
+  }, [user.id])
 
   useEffect(() => {
     dispatch(updateServer({
@@ -67,9 +61,8 @@ const HomeView: FC = () => {
           </div>
         </div>
         <div className="homeMainContainer">
-
-          { currView }
-        
+          { currView ? currView : <HomePeopleList onlineCount={4} friendIds={friendIds}/> } 
+            
           <div className="nowPlayingList">
             <h3 className="nowPlayingHeader">Active Now</h3>
             <div className="defaultPlayingItem">

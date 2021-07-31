@@ -11,22 +11,24 @@ import { ChevronDownIcon, XIcon } from '@heroicons/react/outline'
 import { ServerDropdown } from '../ServerDropdown'
 import { ChannelType, VoiceChannelType } from '../../types/'
 import { selectServer } from '../../reducers/server'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { UserControls } from '../UserControls'
 import { Popout } from '../Popouts/Popout'
-import { hangUp } from '../../utils/WebRTC/handlers'
-import { selectVoice } from '../../reducers/voice'
+import { hangUp, localStreamInit, localVideoInit, remoteVideoInit } from '../../utils/WebRTC/handlers'
+import { selectVoice, updateVoice } from '../../reducers/voice'
 import { VoiceChannelButton } from '../VoiceChannelButton'
 import firebase from 'firebase'
 import { selectUser } from '../../reducers/user'
+import { pc } from '../../utils/WebRTC/config'
 
 type Props = {
   setCurrentChannel: (channel: ChannelType) => void
   toggleVideoGrid: any
+  videoGridOpen: boolean
   //setCurrentVoiceChannel: (channel: Channel) => void
 }
 
-const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
+const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridOpen }) => {
   const history = useHistory()
   const [channelsJSX, setChannelsJSX] = useState<JSX.Element[]>([])
   const [voiceChannelsJSX, setVoiceChannelsJSX] = useState<JSX.Element[]>([])
@@ -35,6 +37,9 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false)
   const [currVCMembers, setCurrVCMembers] = useState<string[]>([])
+  const [hasVideoAccess, setHasVideoAccess] = useState(false)
+  const dispatch = useDispatch()
+
   
   const server = useSelector(selectServer)
   const voice = useSelector(selectVoice)
@@ -97,16 +102,38 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
   }
 
   const handleVoiceDisconnect = async () => {
-
-      await hangUp(voice.id)
-      await fireDb.collection('voiceChannels').doc(voice.voiceId).update({
-        members: firebase.firestore.FieldValue.arrayRemove(user.id)
-      })
+    await hangUp(voice.id)
+    await fireDb.collection('voiceChannels').doc(voice.voiceId).update({
+      members: firebase.firestore.FieldValue.arrayRemove(user.id)
+    })
+    dispatch(updateVoice({
+      inVoice: false
+    }))
     
+  }
+
+  const handleVideoClick = async () => {
+    toggleVideoGrid()
+    if (!videoGridOpen) {
+      await localVideoInit()
+      remoteVideoInit()
+
+    }
+   
+
   }
 
   const closePopout = () => {
     setServerDropdownOpen(false)
+  }
+
+  const checkVideoAccess = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    devices.map(device => {
+      if (device.kind == 'videoinput' && device.label) {
+        setHasVideoAccess(true)
+      }
+    })
   }
 
   useEffect(() => {
@@ -114,7 +141,9 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
     loadVoiceChannels()
   }, [serverToken])
 
-  
+  useEffect(() => {
+    checkVideoAccess()
+  }, [])
 
   return (
     <ChannelStyled>
@@ -178,12 +207,13 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid }) => {
               </div>
 
               <div className="user-info-footer-top2">
-                <button onClick={() => toggleVideoGrid()}>
+                <Button type="solid" callback={() => handleVideoClick()} >
                   <div>
                     <VideoIcon size={18} />
                     <span>Video</span>
                   </div>
-                </button>
+                </Button>
+                
                 <button>
                   <div>
                     <ScreenIcon size={18} />

@@ -28,17 +28,13 @@ const HomeSidebar: FC<Props> = ({ setCurrentDirectName }) => {
   const loadDirectMessages = () => {
     fireDb.collection('directMessages').where('users', 'array-contains', user.id)
     .onSnapshot(({ docs }) => { 
-      let directIds: string[] = []
-      docs.map((doc) => directIds.push(doc.id))
-      setDirectMessageIds(directIds)    
+      setDirectMessageIds(docs.map((doc) => doc.id))
     })
   }
 
   const toggleVideoGrid = () => {
 
   }
-
-  
 
   useEffect(() => {
     loadDirectMessages()

@@ -21,42 +21,25 @@ const DirectMessageItem: FC<Props> = ({ directMessageId }) => {
   const [avatar, setAvatar] = useState("")
   const [status, setStatus] = useState<'Online' | 'Offline' | 'Idle' | 'Busy'>()
 
-  const loadDirectMessages = () => {
-    fireDb.collection('directMessages').doc(directMessageId).get().then((directMessage) => {
-      const userIds = directMessage.data()!.users
-      //      setOtherUserId(userIds.filter((userId: string) => userId !== user.id))
-
-      for (const userId of userIds) {
-        if (userId !== user.id) {
-          getUserData(userId)
-        }
-      }
-    })   
+  const loadDirectMessage = async () => {
+    const directMessage = await fireDb.collection('directMessages').doc(directMessageId).get()
+    const userIds: string[] = directMessage.data()!.users
+    setOtherUserId(userIds.filter((id) => id !== user.id)[0])
   }
-
-  const getUserData = (userId: string) => {
-    fireDb.collection('users').doc(userId).get().then((user) => {
-      setName(user.data()!.username)
-      setAvatar(user.data()!.avatarUrl)
-      setStatus(user.data()!.status)
-      
-    })
-  }
-
 
   const sendToDirectMessage = () => {
     history.push(`/direct/${directMessageId}`)
   }
 
   useEffect(() => {
-    loadDirectMessages()
+    loadDirectMessage()
   }, [])
 
   return (
     <StyledDirectMessageItem>
       <Button type="solid2" width="100%" callback={() => sendToDirectMessage()}>
         <div className="directMessageItem">
-          <UserInfo userName={name} avatar={avatar} status={status}/>
+          {otherUserId && <OtherUserInfo userId={otherUserId}/>}
           <ExitIcon size={16}/>
         </div>       
       </Button>

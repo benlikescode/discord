@@ -77,7 +77,9 @@ const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName })
         </FlexBox>
         
         <FlexBox>
-          <button className="light-gray-btns" onClick={() => memberListOpen ? setMemberListOpen(false) : setMemberListOpen(true)}><MemberList size={24}/></button>
+          {type === 'channelMessages' &&
+            <button className="light-gray-btns" onClick={() => memberListOpen ? setMemberListOpen(false) : setMemberListOpen(true)}><MemberList size={24}/></button>
+          }
           <button className="light-gray-btns" onClick={() => setModalIsOpen(true)}><HelpIcon size={24}/></button>
         </FlexBox>
       </div>

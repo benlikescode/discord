@@ -15,6 +15,7 @@ const MemberSidebarStyled = styled.div`
   .members-grid {
     display: grid;
     row-gap: 15px;
+    margin-top: 8px;
   }
 `
 

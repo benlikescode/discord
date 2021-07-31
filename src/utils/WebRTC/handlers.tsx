@@ -30,6 +30,8 @@ export const remoteStreamInit = (setRemoteStream: any) => {
 }
 
 export const createCall = async (channelId: any) => {
+  console.log(pc)
+
   // Reference Firestore collections for signaling
   const callDoc = fireDb.collection('calls').doc()
   const offerCandidates = callDoc.collection('offerCandidates')
@@ -76,6 +78,8 @@ export const createCall = async (channelId: any) => {
 }
 
 export const answerCall = async (callId: string) => {
+  console.log(pc)
+
   const callDoc = fireDb.collection('calls').doc(callId)
   const offerCandidates = callDoc.collection('offerCandidates')
   const answerCandidates = callDoc.collection('answerCandidates')
@@ -147,4 +151,30 @@ export const hangUp = async (roomId: string) => {
   }
   
   //window.location.reload() 
+}
+
+export const localVideoInit = async () => {
+  let localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+
+  // Push tracks from local stream to peer connection
+  localStream.getTracks().forEach((track) => {
+    pc.addTrack(track, localStream)
+  })
+
+  let myVideo = document.querySelector('#localVideo') as HTMLVideoElement
+  myVideo.srcObject = localStream
+}
+
+export const remoteVideoInit = () => {
+  let remoteStream = new MediaStream()
+
+  // Pull tracks from remote stream, add to audio stream
+  pc.ontrack = event => {
+    event.streams[0].getTracks().forEach(track => {
+      remoteStream.addTrack(track)
+    })
+  }
+
+  let remoteVideo = document.querySelector('#remoteVideo') as HTMLVideoElement 
+  remoteVideo.srcObject = remoteStream
 }
