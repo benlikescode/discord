@@ -34,6 +34,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
   const [voiceChannelsJSX, setVoiceChannelsJSX] = useState<JSX.Element[]>([])
   const { channelToken, serverToken }: any = useParams()
   const [channelModalOpen, setChannelModalOpen] = useState(false)
+  const [voiceChannelModalOpen, setVoiceChannelModalOpen] = useState(false)
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false)
   const [currVCMembers, setCurrVCMembers] = useState<string[]>([])
@@ -48,6 +49,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
   const closeModal = () => {
     setInviteModalOpen(false) 
     setChannelModalOpen(false)
+    setVoiceChannelModalOpen(false)
   }
   
 
@@ -109,6 +111,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
     dispatch(updateVoice({
       inVoice: false
     }))
+    toggleVideoGrid()
     
   }
 
@@ -182,7 +185,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
             <div className="channel-header-left">
               <span>VOICE CHANNELS</span>
             </div>
-            <button onClick={() => setChannelModalOpen(true)} className="add-channel-btn">
+            <button onClick={() => setVoiceChannelModalOpen(true)} className="add-channel-btn">
               <PlusIcon size={18} />
             </button>
           </div>
@@ -231,9 +234,16 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
 
         {channelModalOpen &&
           <Modal closeModal={closeModal}>
-            <CreateChannel closeModal={closeModal}/>
+            <CreateChannel closeModal={closeModal} type="Text"/>
           </Modal>      
         }
+
+        {voiceChannelModalOpen &&
+          <Modal closeModal={closeModal}>
+            <CreateChannel closeModal={closeModal} type="Voice"/>
+          </Modal>      
+        }
+
         {inviteModalOpen &&
           <Modal closeModal={closeModal}>
             <Invite closeModal={closeModal}/>

@@ -42,6 +42,8 @@ const MessageStyled = styled.div<StyledProps>`
 
   .message-content {
     color: #DCDDDE;
+    display: block;
+    word-wrap: break-word;
   }
 
   .message-username {

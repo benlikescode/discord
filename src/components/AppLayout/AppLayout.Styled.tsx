@@ -6,6 +6,7 @@ const StyledAppLayout = styled.div`
 
   .app-content {
     min-height: 100vh;
+    overflow: hidden;
   }
 `
 

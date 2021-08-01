@@ -41,6 +41,11 @@ const ChannelButtonStyled = styled.div`
     font-size: 16px;
   }
 
+  .channelContent {
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+  }
 `
 
 export default ChannelButtonStyled

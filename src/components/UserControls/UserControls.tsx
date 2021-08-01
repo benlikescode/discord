@@ -19,10 +19,10 @@ const UserControls: FC = ({}) => {
 
   const handleMute = () => {
     if (voice.isMuted) {
-      dispatch(updateVoice({isMuted: false, inVoice: true}))
+      dispatch(updateVoice({isMuted: false}))
     }
     if (!voice.isMuted) {
-      dispatch(updateVoice({isMuted: true, inVoice: true}))
+      dispatch(updateVoice({isMuted: true}))
     }
   }
 

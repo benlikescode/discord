@@ -45,6 +45,12 @@ const StyledVoiceChannelButton = styled.div`
     gap: 2px;
     padding-left: 20px;
   }
+
+  .channelContent {
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+  }
   
 `
 

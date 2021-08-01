@@ -93,10 +93,10 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
         onClick={() => channelType === 'text' ? goToTextChannel(channel) : goToVoiceChannel() } 
         className={`text-channel-wrapper ${active ? 'active' : ''}`}
       >
-        <FlexBox>
+        <div className="channelContent">
           {channelType === "text" ? <HashTag size={20} /> : <VoiceIcon size={20}/>}
           <span className="text-channel-name">{ channel.name }</span>
-        </FlexBox>
+        </div>
         
         <div className="text-channel-btns">
           <FlexBox>

@@ -8,30 +8,37 @@ import { ModalFooter } from '../Modal/ModalFooter'
 
 type Props = {
   closeModal: any
+  type: 'Text' | 'Voice'
 }
 
-interface ParamTypes {
-  serverToken: string
-}
-
-const CreateChannel: FC<Props> = ({ closeModal }) => {
-  const { serverToken } = useParams<ParamTypes>()
+const CreateChannel: FC<Props> = ({ closeModal, type }) => {
+  const { serverToken }: any = useParams()
   const [inputVal, setInputVal] = useState("")
 
-  const createChannel = () => {
+  const createChannel = async () => {
     const channelName = inputVal.replaceAll(' ', '-').toLowerCase()
-    fireDb.collection("channels").add({
-      name: channelName,
-      serverToken: serverToken,
-      createdAt: Date.now()
-    })
-    .then(() => closeModal())
+    if (type === 'Text') {
+      await fireDb.collection('channels').add({
+        name: channelName,
+        serverToken: serverToken,
+        createdAt: Date.now()
+      }) 
+    }
+    else {
+      await fireDb.collection('voiceChannels').add({
+        name: inputVal,
+        serverToken: serverToken,
+        createdAt: Date.now(),
+        members: []
+      }) 
+    }      
+    closeModal()
   }
 
   return (
     <StyledCreateChannel>
       <div className="header">
-        <h2>Create Text Channel</h2>
+        <h2>{`Create ${type} Channel`} </h2>
       </div>
 
       <button className="close-modal-btn" onClick={() => closeModal()}>

@@ -40,7 +40,14 @@ const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => {
 
   return (
     <NewMessageStyled>
-      <input ref={messageInput} type="text" placeholder={`Message #${currentChannel?.name}`} onChange={(e) => setMessageContent(e.currentTarget.value)} onKeyDown={(e) => isEnterClick(e)}/>
+      <input 
+        ref={messageInput} 
+        type="text" 
+        placeholder={`Message #${currentChannel?.name}`} 
+        onChange={(e) => setMessageContent(e.currentTarget.value)} 
+        onKeyDown={(e) => isEnterClick(e)}
+        maxLength={2000}
+      />
     </NewMessageStyled>
   )
 }

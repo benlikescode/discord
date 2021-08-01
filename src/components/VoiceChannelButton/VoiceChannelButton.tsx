@@ -63,8 +63,6 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
     })
   }
 
-  
-
   const handleMute = () => {
     if (localStream) {
       if (voice.isMuted) {
@@ -76,6 +74,11 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
     }  
   }
 
+  const deleteChannel = (channel: VoiceChannelType) => {
+    if (channel.name !== 'General') {
+      fireDb.collection('voiceChannels').doc(channel.id).delete()
+    }
+  }
 
   useEffect(() => {
     handleMute()
@@ -84,11 +87,22 @@ const VoiceChannelButton: FC<Props> = ({ channel, callBack}) => {
   return (
     <StyledVoiceChannelButton>
       <button onClick={() => goToVoiceChannel()} className={`text-channel-wrapper`}>
-        <FlexBox>
+        <div className="channelContent">
           <VoiceIcon size={20}/>
           <span className="text-channel-name">{ channel.name }</span>
-        </FlexBox>  
+        </div>  
+
+        <FlexBox>
+          { channel.name !== 'General' &&
+          <div onClick={() => deleteChannel(channel) } className="delete-channel-btn">
+            <ExitIcon size={16}/>
+          </div>
+          }
+        </FlexBox>
       </button>
+
+      
+       
 
       <div className="vcUserList">
         { channel.members &&
