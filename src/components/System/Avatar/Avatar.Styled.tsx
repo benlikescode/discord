@@ -29,8 +29,10 @@ const StyledAvatar = styled.div<StyledProps>`
     border-radius: 50%;
     border: 3px solid #36393f;
     background-color: ${({ status }) => 
-    (status === 'Online' && 'green') ||
-    (status === 'Offline' && 'gray')
+    (status === 'Online' && '#3BA55D') ||
+    (status === 'Offline' && 'gray') ||
+    (status === 'Idle' && '#FAA81A') 
+  
     };
     position: absolute;
     bottom: -3px;

@@ -19,6 +19,9 @@ export const userSlice = createSlice({
       state.avatar = action.payload.avatar || ''
       state.status = action.payload.status || ''
     },
+    updateAvatar: (state, action) => {
+      state.avatar = action.payload.avatar
+    },
     logOutUser: state => {
       state.id = ''
       state.status = 'Offline'
@@ -26,7 +29,7 @@ export const userSlice = createSlice({
   }
 })
 
-export const { updateUser, logOutUser } = userSlice.actions
+export const { updateUser, updateAvatar, logOutUser } = userSlice.actions
 
 export const selectUser = (state: any) => state.user
 

@@ -3,8 +3,8 @@ import { StyledUserSettingsView } from '.'
 import { Button } from '../System'
 import { Avatar } from '../System/Avatar'
 import { fireDb, storage, auth, realDb } from '../../utils/firebase'
-import { selectUser } from '../../reducers/user'
-import { useSelector } from 'react-redux'
+import { logOutUser, selectUser, updateAvatar } from '../../reducers/user'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 const UserSettingsView: FC = () => {
@@ -12,7 +12,7 @@ const UserSettingsView: FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const user = useSelector(selectUser)
   const history = useHistory()
-
+  const dispatch = useDispatch()
   const usersDB = fireDb.collection('users')
 
   const handleImageUpload = async (e: any) => {
@@ -35,26 +35,18 @@ const UserSettingsView: FC = () => {
       currUser!.updateProfile({
         photoURL: imageUrl
       })
+
+      dispatch(updateAvatar({avatar: imageUrl}))
     }
   }
 
-  const logOut = () => {
-    auth.signOut()
-    .then(() => {
-      updateUserStatus()
-      history.push('/login')
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-
-  const updateUserStatus = () => {
-    fireDb.collection('users').doc(user.id).update({
+  const logOut = async () => {
+    await realDb.ref('status').child(user.id).update({
       status: 'Offline'
     })
+    await auth.signOut() 
+    history.push('/login')
   }
-
 
   return (
     <StyledUserSettingsView>

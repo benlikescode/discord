@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { StyledPeopleListItem } from '.'
-import { fireDb } from '../../../utils/firebase'
+import { fireDb, realDb } from '../../../utils/firebase'
 import { FriendActions } from '../../Popouts/FriendActions'
 import { Popout } from '../../Popouts/Popout'
 import { Button } from '../../System'
@@ -14,8 +14,8 @@ const PeopleListItem: FC<Props> = ({ userId }) => {
   const [popoutOpen, setPopoutOpen] = useState(false)
   const [xpos, setXpos] = useState(0)
   const [ypos, setYpos] = useState(0)
-  const [otherUser, setOtherUser] = useState<any>({name: '', avatar: '', status: ''})
-
+  const [otherUser, setOtherUser] = useState<any>({name: '', avatar: ''})
+  const [otherUserStatus, setOtherUserStatus] = useState<'Offline'>("Offline")
 
   const closePopout = () => {
     setPopoutOpen(false)
@@ -31,16 +31,19 @@ const PeopleListItem: FC<Props> = ({ userId }) => {
 
   const getUserDetails = async () => {
     const otherUser = await fireDb.collection('users').doc(userId).get()
+    
     const otherUserDetails = {
       name: otherUser.data()!.username,
       avatar: otherUser.data()!.avatarUrl,
-      status: otherUser.data()!.status
     }
     setOtherUser(otherUserDetails)
   }
 
   useEffect(() => {
     getUserDetails()
+    realDb.ref('status').child(userId).on('value', (snapshot) => {
+      setOtherUserStatus(snapshot.val().status)
+    })
   }, [userId])
 
   return (
@@ -48,11 +51,11 @@ const PeopleListItem: FC<Props> = ({ userId }) => {
       <div className="peopleListItem">
         <div className="userInfo">
           <div className="avatar">
-            <Avatar url={otherUser.avatar} status={otherUser.status} alt={`${otherUser.name}'s profile pic`} size={32}/>
+            <Avatar url={otherUser.avatar} status={otherUserStatus} alt={`${otherUser.name}'s profile pic`} size={32}/>
           </div>
           <div className="text">
             <span className="name">{otherUser.name}</span>
-            <span className="status">{otherUser.status}</span>
+            <span className="status">{otherUserStatus}</span>
           </div>
         </div>
         <div className="actions">

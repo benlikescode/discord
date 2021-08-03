@@ -10,51 +10,35 @@ const LogIn: FC = () => {
   const [password, setPassword] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
-  const logIn = (e: React.FormEvent) => {
+  const logIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      const userId = userCredential.user!.uid
-      getUsersServers(userId)
-    })
-    .catch((error) => {
-      setErrorMessage(error.message)
-    })
-  }
-
-  const getUsersServers = (userId: string) => {
-    if (userId) {
-      fireDb.collection('servers')
-      .where('members', 'array-contains', userId)
-      .onSnapshot(({ docs }) => { 
-        const serverId = docs[0].id
-        getGeneralId(serverId, userId) 
+    try {
+      const signIn = await auth.signInWithEmailAndPassword(email, password)
+      await realDb.ref('status').child(signIn.user!.uid).update({
+        status: 'Online'
       })
+      getUsersServers(signIn.user!.uid)
+    }
+    catch (error) {
+      setErrorMessage(error.message)
     }
   }
 
-  const getGeneralId = (serverId: string, userId: string) => {
+  const getUsersServers = async (userId: string) => {
+    fireDb.collection('servers').where('members', 'array-contains', userId)
+    .onSnapshot(({ docs }) => { 
+      const serverId = docs[0].id
+      getGeneralId(serverId, userId) 
+    }) 
+  }
+
+  const getGeneralId = async (serverId: string, userId: string) => {
     fireDb.collection('channels')
       .where("serverToken", "==", serverId)
       .where("name", "==", "general")
       .onSnapshot(({docs}) => {
       const generalChannelId = docs[0].id
-      updateUserStatus2(userId)       
       history.push(`/server/${serverId}/${generalChannelId}`) 
-    })
-  }
-
-  const updateUserStatus = (userId: string) => {
-    const newMessage = realDb.ref("usersStatus").push(userId)
-    newMessage.set({
-      userId: "abcdefgh",
-      userStatus: "Online"
-    })
-  }
-
-  const updateUserStatus2 = (userId: string) => {
-    fireDb.collection('users').doc(userId).update({
-      status: "Online"
     })
   }
 

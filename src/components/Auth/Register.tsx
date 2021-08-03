@@ -1,9 +1,11 @@
 import React, { FC, useState, useRef } from 'react'
-import { fireDb, auth } from '../../utils/firebase'
+import { fireDb, auth, realDb } from '../../utils/firebase'
 import { Link, useHistory } from 'react-router-dom'
 import splashImage from './splash.png'
 import { RegisterStyled } from '.'
 import { getRandomAvatar } from '../../utils/helperFunctions'
+import { updateAvatar, updateUser } from '../../reducers/user'
+import { useDispatch } from 'react-redux'
 
 const Register: FC = () => {
   const history = useHistory()
@@ -11,40 +13,49 @@ const Register: FC = () => {
   const [password, setPassword] = useState("")
   const [username, setUserName] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
+  const dispatch = useDispatch()
 
-  const register = (e: React.FormEvent) => {
+  const register = async (e: React.FormEvent) => {
     e.preventDefault()
-    auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
+    try {
+      await auth.createUserWithEmailAndPassword(email, password)
       const user = auth.currentUser
       const avatar = `/images/${getRandomAvatar()}`
-      user!.updateProfile({
+      await user!.updateProfile({
         displayName: username,
         photoURL: avatar
       })
-      addUserToDB(user!.uid, avatar)
-      createNewSever(username, user!.uid)  
-    })
-    .catch((error) => {
+      dispatch(updateUser({
+        id: user?.uid,
+        email: user?.email,
+        name: username,
+        avatar: avatar, 
+        status: 'Online'
+      }))
+      await addUserToDB(user!.uid, avatar)
+      await createNewSever(username, user!.uid)  
+    } 
+    catch (error) {
       setErrorMessage(error.message)
-    })
+    }
   }
 
-  const addUserToDB = (userId: string, avatar: string) => {
-    fireDb.collection('users').doc(userId).set({
+  const addUserToDB = async (userId: string, avatar: string) => {
+    await fireDb.collection('users').doc(userId).set({
       username: username,
       friends: [],
       avatarUrl: avatar,
       status: "Online",
       directMessages: []
     })
-    .catch((error) => {
-      console.log("Error writing document:", error)
+    const userStatus = realDb.ref('status').child(userId)
+    userStatus.set({
+      status: 'Online'
     })
   }
 
-  const createNewSever = (username : string, userId: string) => {
-    fireDb.collection("servers").add({
+  const createNewSever = async (username : string, userId: string) => {
+    const thisServer = await fireDb.collection("servers").add({
       name: username + "'s server",
       avatar: "",
       owner: userId,
@@ -53,32 +64,22 @@ const Register: FC = () => {
       banList: [],
       createdAt: Date.now()
     })
-    .then((thisServer) => {
-      addGeneralChannel(thisServer)
-    })
-    .catch((error) => {
-      console.log("Error writing document:", error)
-    })
+    addGeneralChannel(thisServer)
   }
 
-  const addGeneralChannel = (server: any) => {
-    fireDb.collection("channels").add({
+  const addGeneralChannel = async (server: any) => {
+    const thisChannel = await fireDb.collection("channels").add({
       name: "general",
       serverToken: server.id,
       createdAt: Date.now()
     })
-    .then((thisChannel) => {
-      fireDb.collection('servers').doc(server.id).update({generalId: thisChannel.id})
-      addVoiceChannel(server.id)
-      history.push(`/server/${server.id}/${thisChannel.id}`)
-    })
-    .catch((error) => {
-      console.log("Error writing document:", error)
-    })
+    fireDb.collection('servers').doc(server.id).update({generalId: thisChannel.id})
+    await addVoiceChannel(server.id)
+    history.push(`/server/${server.id}/${thisChannel.id}`)
   }
 
-  const addVoiceChannel = (serverToken: string) => {
-    fireDb.collection("voiceChannels").add({
+  const addVoiceChannel = async (serverToken: string) => {
+    await fireDb.collection("voiceChannels").add({
       name: "General",
       serverToken: serverToken,
       createdAt: Date.now(),

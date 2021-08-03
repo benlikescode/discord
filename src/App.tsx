@@ -8,16 +8,18 @@ import { Register, LogIn } from './components/Auth'
 import { InviteView } from './components/InviteView'
 import { ServerSettingsView } from './components/ServerSettingsView'
 import { HomeView } from './components/HomeView'
-import { auth } from './utils/firebase'
+import { auth, realDb } from './utils/firebase'
 import { UserSettingsView } from './components/UserSettingsView'
-import { useDispatch } from 'react-redux'
-import { updateUser, logOutUser } from './reducers/user'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateUser, logOutUser, selectUser } from './reducers/user'
 import { DirectMessageView } from './components/DirectMessageView'
 import { AppLayout } from './components/AppLayout'
 
 const App: FC = () => {
   const dispatch = useDispatch()
- 
+  const user = useSelector(selectUser)
+
+  // updating Users State
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -26,8 +28,7 @@ const App: FC = () => {
             id: authUser.uid,
             name: authUser.displayName,
             email: authUser.email,
-            avatar: authUser.photoURL,
-            status: "Online"
+            avatar: authUser.photoURL         
           })
         )
       }
@@ -36,6 +37,29 @@ const App: FC = () => {
       }
     })
   }, [dispatch])
+
+  // Note that the onDisconnect listener fires when refresh so I am setting back to Online on every refresh
+  // Try and find less expensive way to do this
+
+  // updating Users Status
+  useEffect(() => {
+    if (user.id) {
+      const thisUserStatus = realDb.ref('status').child(user.id)
+      thisUserStatus.update({status: 'Online'})
+      document.onvisibilitychange = (e) => {
+        if (document.visibilityState === 'hidden') {
+          thisUserStatus.update({status: 'Idle'})
+        }
+        else {
+          thisUserStatus.update({status: 'Online'})
+        }
+      }
+      thisUserStatus.onDisconnect().update({status: 'Offline'})    
+    }
+
+  }, [user])
+
+  
 
   return (
     <Router>
