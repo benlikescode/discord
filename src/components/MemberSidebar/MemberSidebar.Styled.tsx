@@ -17,6 +17,10 @@ const MemberSidebarStyled = styled.div`
     row-gap: 15px;
     margin-top: 8px;
   }
+
+  .memberItem {
+    z-index: 1;
+  }
 `
 
 export default MemberSidebarStyled

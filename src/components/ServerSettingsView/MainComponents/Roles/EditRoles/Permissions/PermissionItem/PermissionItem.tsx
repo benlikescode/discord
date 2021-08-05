@@ -3,19 +3,19 @@ import { StyledPermissionItem } from '.'
 import { ToggleSwitch } from '../../../../../../System'
 
 type Props = {
-  label: string
-  note: string
+  name: string
+  description: string
 }
 
-const PermissionItem: FC<Props> = ({ label, note }) => {
+const PermissionItem: FC<Props> = ({ name, description }) => {
   return (
     <StyledPermissionItem>
       <div className="labelRow">
-        <span className="label">{label}</span>
+        <span className="label">{name}</span>
         <ToggleSwitch />
       </div>
       <div className="note">
-        <span>{note}</span>
+        <span>{description}</span>
       </div>
       <div className="divider"></div>
     </StyledPermissionItem>

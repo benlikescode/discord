@@ -14,7 +14,7 @@ const StyledUserModifyPopout = styled.div<StyledProps>`
   left: ${({ cursorX }) => cursorX}px;
   border-radius: 4px;
   box-sizing: border-box;
-  z-index: 9999999;
+  z-index: 999;
   pointer-events: all;
 
   .buttonItem {

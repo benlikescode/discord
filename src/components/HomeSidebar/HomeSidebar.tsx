@@ -7,7 +7,7 @@ import { UserInfo } from '../UserInfo'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
 import { DirectMessageType } from '../../types'
-import { Button } from '../System'
+import { Button, Searchbar } from '../System'
 import { useHistory } from 'react-router-dom'
 import { UserControls } from '../UserControls'
 import { DirectMessageItem } from '../DirectMessageItem'
@@ -43,7 +43,7 @@ const HomeSidebar: FC<Props> = ({ setCurrentDirectName }) => {
   return (
     <StyledHomeSidebar>
       <div className="topNavbar">
-        <button>Find Stuff</button>
+        <Searchbar />
       </div>
 
       <div className="directMessages">

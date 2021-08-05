@@ -59,8 +59,6 @@ const App: FC = () => {
 
   }, [user])
 
-  
-
   return (
     <Router>
       <Switch>

@@ -1,6 +1,9 @@
 import { FC, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { StyledUserModifyPopout } from '.'
+import { selectUser } from '../../reducers/user'
+import { fireDb } from '../../utils/firebase'
 import { Button } from '../System'
 
 type Props = {
@@ -14,6 +17,21 @@ type Props = {
 
 const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, setKickModalOpen, setBanModalOpen }) => {
   const history = useHistory()
+  const user = useSelector(selectUser)
+
+  const IS_THIS_USER = userId === user.id
+  const [clickedUsername, setClickedUsername] = useState("")
+
+  const getClickedUsername = async () => {
+    const clickedUser = await fireDb.collection('users').doc(userId).get()
+    setClickedUsername(clickedUser.data()!.username)
+  }
+
+  useEffect(() => {
+    if (userId) {
+      getClickedUsername()
+    }  
+  }, [userId])
 
   const handleMessage = () => {
     history.push('/home')
@@ -43,11 +61,14 @@ const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, se
 
   return (
     <StyledUserModifyPopout cursorX={cursorX} cursorY={cursorY}>
-      <Button type="solid" width="100%" callback={() => handleMessage()}>
-        <div className="buttonItem">
-          <span>Message</span>
-        </div>
-      </Button>
+      {!IS_THIS_USER && 
+        <Button type="solid" width="100%" callback={() => handleMessage()}>
+          <div className="buttonItem">
+            <span>Message</span>
+          </div>
+        </Button>
+      }
+      
       <Button type="solid" width="100%" callback={() => handleMute()}>
         <div className="buttonItem">
           <span>Mute</span>
@@ -58,22 +79,28 @@ const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, se
           <span>Change Nickname</span>
         </div>
       </Button>
-      <Button type="solid" width="100%" callback={() => handleAddFriend()}>
-        <div className="buttonItem">
-          <span>Add Friend</span>
-        </div>
-      </Button>
+      
 
-      <Button type="solid" width="100%" callback={() => handleKick()}>
-        <div className="buttonItem">
-          <span>Kick Honda</span>
-        </div>
-      </Button>
-      <Button type="solid" width="100%" callback={() => handleBan()}>
-        <div className="buttonItem">
-          <span>Ban Honda</span>
-        </div>
-      </Button>
+      {!IS_THIS_USER && 
+        <>
+          <Button type="solid" width="100%" callback={() => handleAddFriend()}>
+            <div className="buttonItem">
+              <span>Add Friend</span>
+            </div>
+          </Button>
+          <Button type="solid" width="100%" callback={() => handleKick()}>
+            <div className="buttonItem">
+              <span>{`Kick ${clickedUsername}`}</span>
+            </div>
+          </Button>
+          <Button type="solid" width="100%" callback={() => handleBan()}>
+            <div className="buttonItem">
+              <span>{`Ban ${clickedUsername}`}</span>
+            </div>
+          </Button>
+        </> 
+      }
+     
       
     </StyledUserModifyPopout>
   )

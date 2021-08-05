@@ -4,6 +4,7 @@ import { NewMessageStyled } from '.'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
 import { ChannelType } from '../../types'
+import { selectPermissions } from '../../reducers/permissions'
 
 
 type Props = {
@@ -15,6 +16,7 @@ const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => {
   const [messageContent, setMessageContent] = useState("")
   const messageInput = createRef<HTMLInputElement>()
   const user = useSelector(selectUser)
+  const permissions = useSelector(selectPermissions)
 
   const sendMessage = () => {
     const newMessage = realDb.ref(channelToken).push()
@@ -39,14 +41,14 @@ const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => {
   }, [channelToken])
 
   return (
-    <NewMessageStyled>
+    <NewMessageStyled canSendMessages={permissions.sendMessages}>
       <input 
         ref={messageInput} 
         type="text" 
-        placeholder={`Message #${currentChannel?.name}`} 
+        placeholder={permissions.sendMessages ? `Message #${currentChannel?.name}` : 'You do not have permission to send messages in this channel'} 
         onChange={(e) => setMessageContent(e.currentTarget.value)} 
         onKeyDown={(e) => isEnterClick(e)}
-        maxLength={2000}
+        maxLength={2000}      
       />
     </NewMessageStyled>
   )

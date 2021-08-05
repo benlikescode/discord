@@ -17,7 +17,7 @@ const EditRoles: FC = () => {
   const [roleIds, setRoleIds] = useState<string[]>([])
   const [permissions, setPermissions] = useState(['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'])
   const [activeRole, setActiveRole] = useState("")
-  const [currTab, setCurrTab] = useState<ReactNode>()
+  const [currTab, setCurrTab] = useState<'Display' | 'Permissions' | 'Members'>('Display')
 
   const loadRoles = async () => {
     const thisServer = await fireDb.collection('servers').doc(serverToken).get()
@@ -78,13 +78,14 @@ const EditRoles: FC = () => {
             <span>Top Frag</span>
           </div>
           <div className="tabBar">
-            <div className="tabBarItem" onClick={() => setCurrTab(<Display />)}>Display</div>
-            <div className="tabBarItem tabBarItemActive" onClick={() => setCurrTab(<Permissions />)}>Permissions</div>
-            <div className="tabBarItem" onClick={() => setCurrTab(<Permissions />)}>Manage Members (0)</div>
+            <div className={`tabBarItem ${currTab === 'Display' && 'tabBarItemActive'}`} onClick={() => setCurrTab("Display")}>Display</div>
+            <div className={`tabBarItem ${currTab === 'Permissions' && 'tabBarItemActive'}`} onClick={() => setCurrTab("Permissions")}>Permissions</div>
+            <div className={`tabBarItem ${currTab === 'Members' && 'tabBarItemActive'}`} onClick={() => setCurrTab("Members")}>Manage Members (0)</div>
           </div>
         </div>
 
-        { currTab ? currTab : <Display /> }
+        { currTab === 'Display' && <Display />}
+        { currTab === 'Permissions' && <Permissions /> }
 
       </div>
     </StyledEditRoles>

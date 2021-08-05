@@ -51,6 +51,7 @@ body {
   font-size: 1rem;
   color: black;
   background: white;
+  user-select: none;
 }
 
 button, input {

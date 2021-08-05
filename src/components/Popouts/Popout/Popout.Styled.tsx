@@ -9,7 +9,7 @@ const StyledPopout = styled.div`
     bottom: 0;
     background: none!important;
     pointer-events: none;
-    z-index: 9999999;
+    z-index: 1002;
   }
 
   .backdrop {

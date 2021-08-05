@@ -7,9 +7,11 @@ import { Avatar } from '../System/Avatar'
 
 type Props = {
   userId: string
+  noStatus?: boolean
+  avatarSize?: number
 }
 
-const OtherUserInfo: FC<Props> = ({ userId }) => {
+const OtherUserInfo: FC<Props> = ({ userId, noStatus, avatarSize }) => {
   const user = useSelector(selectUser)
   const [otherUser, setOtherUser] = useState<any>({name: '', avatar: ''})
   const [otherUserStatus, setOtherUserStatus] = useState<'Online' | 'Offline' | 'Idle' | 'Busy'>("Offline")
@@ -34,7 +36,9 @@ const OtherUserInfo: FC<Props> = ({ userId }) => {
   return (
     <StyledOtherUserInfo>
      <div className="user-profile-image">
-       <Avatar url={otherUser.avatar} size={30} status={otherUserStatus}/>
+      {noStatus ? <Avatar url={otherUser.avatar} size={avatarSize || 32}/> :
+        <Avatar url={otherUser.avatar} size={avatarSize || 32} status={otherUserStatus}/>
+      }
       </div>
       <div className="user-name-wrapper">
         <span>{otherUser.name}</span>

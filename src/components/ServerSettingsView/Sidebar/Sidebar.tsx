@@ -4,6 +4,8 @@ import { StyledSidebar } from '.'
 import { Button } from '../../System'
 import { Overview, Roles } from '../MainComponents'
 import { Modal, DeleteServer } from '../../Modals'
+import { Bans } from '../MainComponents/Bans'
+import { AuditLog } from '../MainComponents/AuditLog'
 
 type Props = {
   serverName: string
@@ -21,12 +23,18 @@ const Sidebar: FC<Props> = ({ serverName, deleteServer, setCurrMainComponent }) 
 
   const handleButtonItemClick = (buttonItem: string) => {
     switch(buttonItem) {
-      case "Overview":
+      case 'Overview':
         setCurrMainComponent(<Overview />)
-        break;
-      case "Roles":
+        break
+      case 'Roles':
         setCurrMainComponent(<Roles setCurrMainComponent={setCurrMainComponent}/>)
-        break;
+        break
+      case 'Audit Log':
+        setCurrMainComponent(<AuditLog />)
+        break
+      case 'Bans':
+        setCurrMainComponent(<Bans />)
+        break
       default:
         setCurrMainComponent(<Overview />)
     }

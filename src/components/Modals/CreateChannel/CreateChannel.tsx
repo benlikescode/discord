@@ -1,6 +1,8 @@
 import { FC, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { StyledCreateChannel } from '.'
+import { selectUser } from '../../../reducers/user'
 import { fireDb } from '../../../utils/firebase'
 import { ExitIcon } from '../../Icon'
 import { Input } from '../../System'
@@ -13,6 +15,7 @@ type Props = {
 
 const CreateChannel: FC<Props> = ({ closeModal, type }) => {
   const { serverToken }: any = useParams()
+  const user = useSelector(selectUser)
   const [inputVal, setInputVal] = useState("")
 
   const createChannel = async () => {
@@ -23,6 +26,15 @@ const CreateChannel: FC<Props> = ({ closeModal, type }) => {
         serverToken: serverToken,
         createdAt: Date.now()
       }) 
+      await fireDb.collection('servers').doc(serverToken).collection('auditLog').add({
+        avatar: user.avatar,
+        label1: user.name,
+        label2: `#${channelName}`,
+        action: 'CreatedText',
+        iconType: 'Create',
+        timestamp: Date().toString(),
+        hasDropdown: true
+      })
     }
     else {
       await fireDb.collection('voiceChannels').add({
@@ -31,6 +43,15 @@ const CreateChannel: FC<Props> = ({ closeModal, type }) => {
         createdAt: Date.now(),
         members: []
       }) 
+      await fireDb.collection('servers').doc(serverToken).collection('auditLog').add({
+        avatar: user.avatar,
+        label1: user.name,
+        label2: inputVal,
+        action: 'CreatedVoice',
+        iconType: 'Create',
+        timestamp: Date().toString(),
+        hasDropdown: true
+      })
     }      
     closeModal()
   }

@@ -1,9 +1,15 @@
 import styled from 'styled-components'
 
-const NewMessageStyled = styled.div`
+type StyledProps = {
+  canSendMessages: boolean
+}
+
+const NewMessageStyled = styled.div<StyledProps>`
   width: 100%;
   padding: 0 16px 24px 16px;
   box-sizing: border-box;
+  cursor: ${({ canSendMessages }) => !canSendMessages && 'not-allowed'};
+  opacity: ${({ canSendMessages }) => !canSendMessages && '0.5'};
 
   input {
     padding: 11px;
@@ -16,6 +22,7 @@ const NewMessageStyled = styled.div`
     border-radius: 8px;
     box-sizing: border-box;
     height: 45px;
+    pointer-events: ${({ canSendMessages }) => !canSendMessages && 'none'};
   }
 `
 

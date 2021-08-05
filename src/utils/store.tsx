@@ -3,13 +3,15 @@ import userReducer from '../reducers/user'
 import serverReducer from '../reducers/server'
 import voiceReducer from '../reducers/voice'
 import channelReducer from '../reducers/channel'
+import permissionReducer from '../reducers/permissions'
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     server: serverReducer, 
     channel: channelReducer,
-    voice: voiceReducer
+    voice: voiceReducer,
+    permissions: permissionReducer
   }
 })
 

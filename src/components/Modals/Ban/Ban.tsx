@@ -1,35 +1,60 @@
-import { FC, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { FC, useEffect, useState } from 'react'
 import { StyledBan } from '.'
-import { fireDb } from '../../../utils/firebase'
+import { fireDb, realDb } from '../../../utils/firebase'
 import { Textarea } from '../../System/Textarea'
 import { ModalFooter } from '../Modal/ModalFooter'
 import firebase from 'firebase'
+import { useSelector } from 'react-redux'
+import { selectServer } from '../../../reducers/server'
+import { selectUser } from '../../../reducers/user'
 
 type Props = {
   closeModal: any
   userId: string
 }
 
-interface ParamTypes {
-  serverToken: string
-}
-
 const Ban: FC<Props> = ({ closeModal, userId }) => {
-  const { serverToken } = useParams<ParamTypes>()
   const [banMessage, setBanMessage] = useState("")
+  const [clickedUsername, setClickedUsername] = useState("")
+  const server = useSelector(selectServer)
+  const user = useSelector(selectUser)
 
-  const handleBan = () => {
-    fireDb.collection('servers').doc(serverToken).update({
-      banList: firebase.firestore.FieldValue.arrayUnion(userId)
-    })
+  const handleBan = async () => {
+    if (server.id && userId) {
+      await fireDb.collection('servers').doc(server.id).update({
+        banList: firebase.firestore.FieldValue.arrayUnion({id: userId, reason: banMessage}),
+        members: firebase.firestore.FieldValue.arrayRemove(userId)
+      })
+      await fireDb.collection('servers').doc(server.id).collection('auditLog').add({
+        avatar: user.avatar,
+        label1: user.name,
+        label2: clickedUsername,
+        action: 'Ban',
+        iconType: 'Delete',
+        timestamp: Date().toString(),
+        reason: banMessage,
+        hasDropdown: (banMessage !== '')
+      })
+      
+      realDb.ref('removes').child(userId).set({ removed: true })
+      closeModal()
+    }  
   }
 
-  const hardCodedUsername = "ben16"
- 
+  const getClickedUsername = async () => {
+    const clickedUser = await fireDb.collection('users').doc(userId).get()
+    setClickedUsername(clickedUser.data()!.username)
+  }
+
+  useEffect(() => {
+    if (userId) {
+      getClickedUsername()
+    }  
+  }, [userId])
+
   return (
     <StyledBan>
-      <h2 className="header">{`Would you like to ban '@${hardCodedUsername}?'`}</h2>
+      <h2 className="header">{`Would you like to ban '@${clickedUsername}?'`}</h2>
       <div className="content">
         <div className="banVideo">
           <video src="/videos/banVideo.mp4" autoPlay loop muted width={400}></video>

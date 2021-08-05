@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { MemberSidebarStyled } from '.'
 import { fireDb } from '../../utils/firebase'
 import { useParams } from 'react-router-dom'
@@ -26,11 +26,16 @@ const MemberSidebar: FC = () => {
   const [banModalOpen, setBankModalOpen] = useState(false)
 
   const [memberIds, setMemberIds] = useState<string[]>([])
+  const [currMemberId, setCurrMemberId] = useState("")
 
-  const closeModal = () => {
-    setKickModalOpen(false)
-    setBankModalOpen(false)
-  }
+  const closeModal = useCallback(
+    () => {
+      setKickModalOpen(false)
+      setBankModalOpen(false)
+      getServerMembers()
+    },
+    [],
+  )
 
   const getServerMembers = async () => {
     const server = await fireDb.collection('servers').doc(serverToken).get()
@@ -48,7 +53,7 @@ const MemberSidebar: FC = () => {
     setPopoutOpen(false)
   }
 
-  const handleContextMenu = (e: any) => {
+  const handleContextMenu = (e: any, memberId: string) => {
     e.preventDefault()     
     setXpos(e.pageX - POPOUTWIDTH)
     if (e.pageY > height - POPOUTHEIGHT) {
@@ -57,6 +62,7 @@ const MemberSidebar: FC = () => {
     else {
       setYpos(e.pageY)
     } 
+    setCurrMemberId(memberId)
     setPopoutOpen(true)
   }
   
@@ -71,7 +77,7 @@ const MemberSidebar: FC = () => {
         <h2>Members</h2>
         <div className="members-grid">
           { memberIds.map((memberId, idx) => (
-            <div className="memberItem" onMouseDown={(e) => handleUserClick(e)} onContextMenu={(e) => handleContextMenu(e)} key={idx}>
+            <div className="memberItem" onClick={() => setCurrMemberId(memberId)} onContextMenu={(e) => handleContextMenu(e, memberId)} key={idx}>
               <OtherUserInfo userId={memberId}/>
             </div>
           )) }
@@ -79,19 +85,19 @@ const MemberSidebar: FC = () => {
       </div>
       {popoutOpen && 
         <Popout closePopout={closePopout}>
-          <UserModifyPopout userId="13" cursorX={xpos} cursorY={ypos} closePopout={closePopout} setKickModalOpen={setKickModalOpen} setBanModalOpen={setBankModalOpen}/>
+          <UserModifyPopout userId={currMemberId} cursorX={xpos} cursorY={ypos} closePopout={closePopout} setKickModalOpen={setKickModalOpen} setBanModalOpen={setBankModalOpen}/>
         </Popout>
       }
       {
         kickModalOpen &&
         <Modal closeModal={closeModal}>
-          <Kick closeModal={closeModal} userId="13"/>
+          <Kick closeModal={closeModal} userId={currMemberId}/>
         </Modal>
       }
       {
         banModalOpen &&
         <Modal closeModal={closeModal}>
-          <Ban closeModal={closeModal} userId="maY5O1I4zDf4L1qRn6sObKp6NfP2"/>
+          <Ban closeModal={closeModal} userId={currMemberId}/>
         </Modal>
       }
      

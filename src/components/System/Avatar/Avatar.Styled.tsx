@@ -6,8 +6,8 @@ type StyledProps = {
 }
 
 const StyledAvatar = styled.div<StyledProps>`
-  height: ${({ size }) => size ? size : '30'}px;
-  width: ${({ size }) => size ? size : '30'}px;
+  height: ${({ size }) => size ? size : '32'}px;
+  width: ${({ size }) => size ? size : '32'}px;
   position: relative;
   cursor: pointer;
   
