@@ -21,6 +21,7 @@ export { default as Mute } from './Mute'
 export { default as Deafen } from './Deafen'
 export { default as AtIcon } from './AtIcon'
 export { default as Muted } from './Muted'
+export { default as SystemMsgArrow } from './SystemMsgArrow'
 
 
 

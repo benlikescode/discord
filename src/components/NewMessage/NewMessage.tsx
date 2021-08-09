@@ -5,18 +5,18 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '../../reducers/user'
 import { ChannelType } from '../../types'
 import { selectPermissions } from '../../reducers/permissions'
-
+import { useParams } from 'react-router-dom'
 
 type Props = {
-  channelToken: string
-  currentChannel?: ChannelType | undefined
+  currentChannel: ChannelType
 }
 
-const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => { 
+const NewMessage: FC<Props> = ({ currentChannel }) => { 
   const [messageContent, setMessageContent] = useState("")
   const messageInput = createRef<HTMLInputElement>()
   const user = useSelector(selectUser)
   const permissions = useSelector(selectPermissions)
+  const { channelToken }: any = useParams()
 
   const sendMessage = () => {
     const newMessage = realDb.ref(channelToken).push()
@@ -38,7 +38,7 @@ const NewMessage: FC<Props> = ({ channelToken, currentChannel }) => {
   useEffect(() => {
     messageInput.current!.focus()
     messageInput.current!.value = ""
-  }, [channelToken])
+  }, [currentChannel.id])
 
   return (
     <NewMessageStyled canSendMessages={permissions.sendMessages}>

@@ -29,7 +29,7 @@ const FriendActions: FC<Props> = ({ cursorX, cursorY, userId }) => {
 
   return (
     <StyledFriendActions cursorX={cursorX} cursorY={cursorY}>
-       <Button type="solid" width="100%" callback={() => handleStartCall()}>
+      <Button type="solid" width="100%" callback={() => handleStartCall()}>
         <div className="buttonItem">
           <span>Start Call</span>
         </div>

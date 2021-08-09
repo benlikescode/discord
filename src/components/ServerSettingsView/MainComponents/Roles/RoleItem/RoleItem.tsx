@@ -1,53 +1,46 @@
 import { DotsHorizontalIcon, LockClosedIcon, UserIcon } from '@heroicons/react/outline'
 import { FC, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { StyledRoleItem } from '.'
 import { RoleType } from '../../../../../types'
 import { fireDb } from '../../../../../utils/firebase'
 import { DragIcon, Shield } from '../../../../Icon'
 import { Button, Icon } from '../../../../System'
 import firebase from 'firebase'
+import { selectServer } from '../../../../../reducers/server'
+import { useSelector } from 'react-redux'
 
 type Props = {
   roleId: string
 }
 
-interface ParamTypes {
-  serverToken: string
-}
-
 const RoleItem: FC<Props> = ({ roleId }) => {
-  const { serverToken } = useParams<ParamTypes>()
   const [roleData, setRoleData] = useState<RoleType>({name: '', color: ''})
+  const server = useSelector(selectServer)
 
-  const getRoleData = () => {
-    if (roleId) {
-      fireDb.collection('roles').doc(roleId).get()
-      .then((role) => {
-        const roleData = {
-          name: role.data()!.name,
-          color: role.data()!.color,
-          memberCount: role.data()!.memberCount
-        }
-        setRoleData(roleData)
-      })
-    } 
+  const getRoleData = async () => {
+    const role = await fireDb.collection('roles').doc(roleId).get()
+    setRoleData({
+      name: role.data()!.name,
+      color: role.data()!.color,
+      memberCount: role.data()!.memberCount
+    })  
   }
 
-  const deleteRole = () => {
-    fireDb.collection('roles').doc(roleId).delete().then(() => {
-      fireDb.collection('servers').doc(serverToken).update({
-        roles: firebase.firestore.FieldValue.arrayRemove(roleId)
-      })
-    })
+  const deleteRole = async () => {
+    await fireDb.collection('roles').doc(roleId).delete()
+    await fireDb.collection('servers').doc(server.id).update({
+      roles: firebase.firestore.FieldValue.arrayRemove(roleId)
+    }) 
   }
 
   // will have to check each role for this if the user does not contain this role
   const IS_LOCKED = false
 
   useEffect(() => {
-    getRoleData()
-  }, [])
+    if (roleId) {
+      getRoleData()
+    }
+  }, [roleId])
 
   return (
     <StyledRoleItem>

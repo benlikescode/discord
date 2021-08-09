@@ -4,14 +4,15 @@ import { StyledInput } from '.'
 type Props = {
   label?: string
   type: string
-  placeholder: string
+  placeholder?: string
   value?: string
   callback?: any
   isDisabled?: boolean
   errorMessage?: string
+  readOnly?: boolean
 }
 
-const Input: FC<Props> = ({ label, type, placeholder, value, callback, isDisabled, errorMessage }) => {
+const Input: FC<Props> = ({ label, type, placeholder, value, callback, isDisabled, errorMessage, readOnly }) => {
 
   const [currValue, setCurrValue] = useState<string | number>(value || '')
   const [errorState, setErrorState] = useState(false)
@@ -34,6 +35,7 @@ const Input: FC<Props> = ({ label, type, placeholder, value, callback, isDisable
         onChange={(e) => onInputChange(e.currentTarget.value)} 
         value={currValue} 
         type={type}
+        readOnly={readOnly}
         lang="en" 
         />
       </div>

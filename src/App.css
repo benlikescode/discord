@@ -43,6 +43,7 @@
   --bencordGray2: #2f3136;
   --bencordGray3: #36393f;
   --bencordLightGray: #dcddde;
+  --border: 1px solid #ffffff0f;
 }
   
 body {

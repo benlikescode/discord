@@ -1,7 +1,13 @@
 import styled from 'styled-components'
 
 const InviteViewStyled = styled.div`
-  .splash-image {
+
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .splashImage {
     position: absolute;
     top: 0;
     right: 0;

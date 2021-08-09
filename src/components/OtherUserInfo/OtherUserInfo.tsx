@@ -9,9 +9,10 @@ type Props = {
   userId: string
   noStatus?: boolean
   avatarSize?: number
+  nickname?: string
 }
 
-const OtherUserInfo: FC<Props> = ({ userId, noStatus, avatarSize }) => {
+const OtherUserInfo: FC<Props> = ({ userId, noStatus, avatarSize, nickname }) => {
   const user = useSelector(selectUser)
   const [otherUser, setOtherUser] = useState<any>({name: '', avatar: ''})
   const [otherUserStatus, setOtherUserStatus] = useState<'Online' | 'Offline' | 'Idle' | 'Busy'>("Offline")
@@ -41,7 +42,7 @@ const OtherUserInfo: FC<Props> = ({ userId, noStatus, avatarSize }) => {
       }
       </div>
       <div className="user-name-wrapper">
-        <span>{otherUser.name}</span>
+        <span>{nickname ? nickname : otherUser.name}</span>
       </div>
     </StyledOtherUserInfo>
   )

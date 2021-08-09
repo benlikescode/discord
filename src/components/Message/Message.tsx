@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { MessageStyled } from '.'
 import { formatDate } from '../../utils/helperFunctions'
+import { SystemMsgArrow } from '../Icon'
 import { MessageOptions } from '../MessageOptions'
 import { Avatar } from '../System/Avatar'
 
@@ -11,11 +12,12 @@ type Props = {
   fullView?: boolean
   username: string
   content: string
-  date?: string | undefined
+  date: string
   avatar: string
+  systemMessage?: boolean
 }
 
-const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, username, content, date, avatar }) => {
+const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, username, content, date, avatar, systemMessage }) => {
 
   const [isHovering, setIsHovering] = useState(false);
   
@@ -41,27 +43,41 @@ const Message: FC<Props> = ({ id, deleteCallback, editCallback, fullView, userna
   
   return (
     <MessageStyled fullView={fullView}>
-      <div className="message" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
-        {fullView ?
-          <Avatar url={avatar} size={40}/>
-          :
-          <div className="user-profile-spacer"/>
-        }
-        <div className="message-info">
-          {fullView && 
-            <div className="message-info-header">
-              <span className="message-username">{ username }</span>
-              {date && <span className="message-date">{ formatDate(date) }</span>}
-            </div>
-          }
-          <div className="message-info-body">
-            {
-              isValidHttpUrl(content) ? <a href={content} className="messageUrl">{content}</a> : <span className="message-content">{ content }</span>
-            }
+      {systemMessage ? 
+        <div className="systemMessage">
+          <div className="systemMessageIcon">
+            <SystemMsgArrow size={18}/>
+          </div>
+          <div className="systemMessageContent">
+            <span className="systemUsername">{`${username}`}</span>
+            <span className="systemGreeting">{content}</span>
+            <span className="systemTimestamp">{formatDate(date)}</span>
           </div>
         </div>
-        {isHovering && <MessageOptions messageId={id} editCallback={editCallback} deleteCallback={deleteCallback}/>} 
-      </div>
+        :
+        <div className="message" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+          {fullView ?
+            <Avatar url={avatar} size={40}/>
+            :
+            <div className="user-profile-spacer"/>
+          }
+          <div className="message-info">
+            {fullView && 
+              <div className="message-info-header">
+                <span className="message-username">{ username }</span>
+                <span className="message-date">{formatDate(date)}</span>
+              </div>
+            }
+            <div className="message-info-body">
+              {
+                isValidHttpUrl(content) ? <a href={content} className="messageUrl">{content}</a> : <span className="message-content">{ content }</span>
+              }
+            </div>
+          </div>
+          {isHovering && <MessageOptions messageId={id} editCallback={editCallback} deleteCallback={deleteCallback}/>} 
+        </div>
+      }
+      
         
     </MessageStyled>
   )

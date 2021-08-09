@@ -45,6 +45,46 @@ const StyledUserSettingsView = styled.div`
     margin: 8px 16px 16px;
   }
 
+  .editUsername {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .textTop {
+    margin-bottom: 4px;
+    color: #8e9297;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    text-transform: uppercase; 
+  }
+
+  .textBottom {
+    font-size: 16px;
+    line-height: 20px;
+    color: #fff;
+  }
+
+  .editButton {
+    color: #fff;
+    background-color: #4f545c;
+    width: 60px;
+    height: 32px;
+    min-width: 60px;
+    min-height: 32px;
+    transition: background-color .17s ease,color .17s ease; 
+    display: flex;
+    align-items: center;   
+    justify-content: center; 
+    box-sizing: border-box;   
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    padding: 2px 16px;
+  }
+
   .avatar {
     border: 7px solid #202225;
     background-color: #202225;
@@ -87,6 +127,84 @@ const StyledUserSettingsView = styled.div`
     display: flex;  
     justify-content: center; 
     align-items: center;
+  }
+
+  .revealEmail {
+    color: #00AFF4;
+    font-size: 14px;
+    padding: 2px 4px;
+    background: transparent;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    border-top: var(--border);
+    margin: 40px 0;
+  }
+
+  .header {
+    color: #fff;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .passwordSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .imageWrapper {
+    max-width: 150px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .accountRemovalHeader {
+    color: #8e9297;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .accountRemovalLabel {
+    color: #b9bbbe;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    margin: 8px 0;
+  }
+
+  .deleteAccountBtn {
+    background-color: #ED4245;
+    color: #fff;
+    font-weight: 400;
+    font-size: 14px;
+    padding: 0 16px;
+    border-radius: 3px;
+    height: 32px;
+  }
+
+  .logoutBtn {
+    background-color: transparent;
+    color: #ED4245;
+    font-weight: 400;
+    font-size: 14px;
+    padding: 0 16px;
+    border-radius: 3px;
+    height: 32px;
+    border: 1px solid #ED4245;
+  }
+
+  .accountRemovalBtns {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
   }
 
   

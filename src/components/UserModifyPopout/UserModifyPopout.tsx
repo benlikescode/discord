@@ -13,9 +13,10 @@ type Props = {
   closePopout: any
   setKickModalOpen: any
   setBanModalOpen: any
+  setNickModalOpen: any
 }
 
-const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, setKickModalOpen, setBanModalOpen }) => {
+const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, setKickModalOpen, setBanModalOpen, setNickModalOpen }) => {
   const history = useHistory()
   const user = useSelector(selectUser)
 
@@ -42,7 +43,7 @@ const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, se
   }
 
   const handleChangeNickname = () => {
-    alert("nick changed")
+    setNickModalOpen(true)
   }
 
   const handleAddFriend = () => {
@@ -51,12 +52,10 @@ const UserModifyPopout: FC<Props> = ({ userId, cursorX, cursorY, closePopout, se
 
   const handleKick = () => {
     setKickModalOpen(true)
-    closePopout()
   }
 
   const handleBan= () => {
     setBanModalOpen(true)
-    closePopout()
   }
 
   return (

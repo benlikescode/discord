@@ -5,7 +5,7 @@ const App = {
   channel: '/server/:serverToken/:channelToken',
   login: '/login',
   register: '/register',
-  invite: '/invite/:serverToken',
+  invite: '/invite/:inviteToken',
   settings: '/server/:serverToken/settings',
   userSettings: '/settings',
   directMessages: '/direct/:channelToken'

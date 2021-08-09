@@ -20,15 +20,14 @@ import { VoiceChannelButton } from '../VoiceChannelButton'
 import firebase from 'firebase'
 import { selectUser } from '../../reducers/user'
 import { pc } from '../../utils/WebRTC/config'
+import { Nickname } from '../Modals/Nickname'
 
 type Props = {
-  setCurrentChannel: (channel: ChannelType) => void
   toggleVideoGrid: any
   videoGridOpen: boolean
-  //setCurrentVoiceChannel: (channel: Channel) => void
 }
 
-const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridOpen }) => {
+const ChannelList: FC<Props> = ({ toggleVideoGrid, videoGridOpen }) => {
   const history = useHistory()
   const [channelsJSX, setChannelsJSX] = useState<JSX.Element[]>([])
   const [voiceChannelsJSX, setVoiceChannelsJSX] = useState<JSX.Element[]>([])
@@ -36,6 +35,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
   const [channelModalOpen, setChannelModalOpen] = useState(false)
   const [voiceChannelModalOpen, setVoiceChannelModalOpen] = useState(false)
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
+  const [changeNicknameOpen, setChangeNicknameOpen] = useState(false)
   const [serverDropdownOpen, setServerDropdownOpen] = useState(false)
   const [currVCMembers, setCurrVCMembers] = useState<string[]>([])
   const [hasVideoAccess, setHasVideoAccess] = useState(false)
@@ -50,6 +50,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
     setInviteModalOpen(false) 
     setChannelModalOpen(false)
     setVoiceChannelModalOpen(false)
+    setChangeNicknameOpen(false)
   }
   
 
@@ -67,10 +68,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
         let channelJSX: JSX.Element[] = []
 
         channelList.map((channel, index) => {
-          if (channel.id === channelToken) {
-            setCurrentChannel(channel)
-          }
-          channelJSX.push( <ChannelButton key={index} channel={channel} callBack={setCurrentChannel} channelType="text"/> )
+          channelJSX.push( <ChannelButton key={index} channel={channel} channelType="text"/> )
         })
         setChannelsJSX(channelJSX)
       })
@@ -97,8 +95,6 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
     }
   }
 
-  
-
   const handleServerDropdown = () => {
     setServerDropdownOpen(!serverDropdownOpen);
   }
@@ -120,10 +116,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
     if (!videoGridOpen) {
       await localVideoInit()
       remoteVideoInit()
-
     }
-   
-
   }
 
   const closePopout = () => {
@@ -249,6 +242,13 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
             <Invite closeModal={closeModal}/>
           </Modal>      
         }
+        
+        {
+          changeNicknameOpen &&
+          <Modal closeModal={closeModal}>
+            <Nickname closeModal={closeModal} userId={user.id}/>
+          </Modal>  
+        }
        
       </div>
       {serverDropdownOpen && 
@@ -257,6 +257,7 @@ const ChannelList: FC<Props> = ({ setCurrentChannel, toggleVideoGrid, videoGridO
             setServerDropdownOpen={setServerDropdownOpen} 
             setInviteOpen={setInviteModalOpen} 
             setCreateChannelOpen={setChannelModalOpen}
+            setChangeNicknameOpen={setChangeNicknameOpen}
           />
         </Popout>
       }

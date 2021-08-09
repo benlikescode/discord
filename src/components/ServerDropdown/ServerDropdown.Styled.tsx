@@ -19,6 +19,10 @@ const StyledServerDropdown = styled.div`
     width: 100%;
   }
 
+  .boostIcon {
+    color: hsl(302,calc(var(--saturation-factor, 1)*100%),72.5%);
+  }
+
 `
 
 export default StyledServerDropdown

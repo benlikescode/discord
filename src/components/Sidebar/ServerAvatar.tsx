@@ -1,10 +1,6 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom' 
+import React, { FC } from 'react'
+import { Link } from 'react-router-dom' 
 import { getServerAcronym } from '../../utils/helperFunctions'
-import { selectServer } from '../../reducers/server'
-import { Avatar } from '../System/Avatar'
-import { useSelector } from 'react-redux'
-import { ServerType } from '../../types'
 
 type Props = {
   server: {
@@ -12,17 +8,12 @@ type Props = {
     name: string
     id?: string
     generalId?: string
-  };
-  isActive?: boolean;
-  onClick: () => void;
-}
-
-interface ParamTypes {
-  serverToken: string
+  }
+  isActive?: boolean
+  onClick: () => void
 }
 
 const ServerAvatar: FC<Props> = ({ server, isActive, onClick }) => {
-  const { serverToken } = useParams<ParamTypes>()
 
   return (
     <Link onClick={() => onClick()} to={`/server/${server.id}/${server.generalId}`}>

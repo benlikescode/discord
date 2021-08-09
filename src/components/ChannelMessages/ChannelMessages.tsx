@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState, createRef } from 'react'
-import { useParams } from 'react-router-dom'
 import { realDb } from '../../utils/firebase'
 import { ChannelMessagesStyled } from '.'
 import { FlexBox } from '../FlexBox'
@@ -9,24 +8,26 @@ import { NewMessage } from '../NewMessage'
 import { HelpModal } from '../HelpModal'
 import { MemberSidebar } from '../MemberSidebar'
 import { ChannelType } from '../../types'
+import { selectServer } from '../../reducers/server'
+import { useSelector } from 'react-redux'
+import { selectChannel } from '../../reducers/channel'
+import { useParams } from 'react-router-dom'
 
 type Props = {
-  currentChannel?: any
   type: 'channelMessages' | 'directMessages'
   currentDirectName?: string
 }
 
-interface ParamTypes {
-  channelToken: string
-}
-
-const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName }) => {
+const ChannelMessages: FC<Props> = ({ type, currentDirectName }) => {
   const [messages, setMessages] = useState<JSX.Element[]>([])
-  const { channelToken } = useParams<ParamTypes>()
   const messageListRef = createRef<HTMLDivElement>()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const closeModal = () => setModalIsOpen(false)
   const [memberListOpen, setMemberListOpen] = useState(true)
+  const { channelToken }: any = useParams()
+
+  const server = useSelector(selectServer)
+  const channel = useSelector(selectChannel)
 
   const deleteMessage = async (messageId: string) => {
     const dbRef = realDb.ref();
@@ -37,7 +38,7 @@ const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName })
     // TODO
   }
 
-  useEffect(() => {
+  useEffect(() => { 
     realDb.ref(channelToken).on('value', (( snapshot ) => {
       let messageList: JSX.Element[] = []
       let lastUser = ""
@@ -50,17 +51,18 @@ const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName })
             deleteCallback={deleteMessage}
             editCallback={editMessage}
             date={snap.val().date} 
-            fullView={!(lastUser === snap.val().user)} 
+            fullView={!(lastUser === snap.val().user) || snap.val().systemMessage} 
             username={snap.val().user} 
             content={snap.val().content}
             avatar={snap.val().avatar}
+            systemMessage={snap.val().systemMessage}
             />
         )
         lastUser = snap.val().user
       })
-     
+      
       setMessages(messageList)
-    }))
+    }))  
   }, [channelToken])
 
   useEffect(() => {
@@ -72,8 +74,8 @@ const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName })
 
       <div className="channel-messages-navbar">
         <FlexBox>
-          {currentChannel ? <HashTag size={24}/> : <AtIcon size={24}/>}        
-          <span className="navbar-channel-name">{currentChannel ? currentChannel?.name : currentDirectName}</span>
+          {channel.id === '' ? <AtIcon size={24}/> : <HashTag size={24}/>}        
+          <span className="navbar-channel-name">{channel.id === '' ? currentDirectName : channel.name}</span>
         </FlexBox>
         
         <FlexBox>
@@ -87,11 +89,20 @@ const ChannelMessages: FC<Props> = ({ currentChannel, type, currentDirectName })
       <div className="channel-messages-body">
         <div className="messaging-container">
           <div ref={ messageListRef } className="message-list">
+           
+            <div className="welcomeMessageWrapper">
+              <div className="welcomeMessageInner">
+                <h3 className="welcomeMessage">Welcome to {channel.name === 'general' ? server.name : `#${channel.name}!`}</h3>
+                <span className="welcomeLabel">{`This is the beginning of ${channel.name === 'general' ? 'this server.' : `the #${channel.name} channel.`}`}</span>
+              </div>
+            </div>
+            
             { messages }
+
             <div className="spacer"/>
           </div>
     
-          <NewMessage channelToken={ channelToken } currentChannel={ currentChannel } />
+          <NewMessage currentChannel={channel} />
         </div>
 
         {(memberListOpen && type === 'channelMessages') && <MemberSidebar/>}

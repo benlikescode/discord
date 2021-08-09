@@ -1,4 +1,5 @@
 import { RoleType } from '.'
+import BannedUser from './BannedUser'
 
 type Server = {
   id: string
@@ -9,6 +10,7 @@ type Server = {
   roles?: RoleType[]
   generalId?: string
   createdAt?: number
+  banList?: BannedUser[]
 }
 
 export default Server

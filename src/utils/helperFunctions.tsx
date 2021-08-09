@@ -41,11 +41,12 @@ export const formatDate = (dateRaw: string) => {
   return <span>{dateFormatted}</span>
 }
 
-export const createInviteLink = () => {
-  const fullUrl = window.location.href
-  const splitUrl = fullUrl.split('/')
-  const inviteUrl = "http://" + splitUrl[2] + "/invite/" + splitUrl[4]
-  return inviteUrl
+export const getHostname = () => {
+  let fullUrl = window.location.href
+  if (fullUrl.includes('localhost')) {
+    return 'http://localhost:3000/'
+  }
+  return 'https://bencord-9b434.web.app/'
 }
 
 export const getAuditIcon = (type: string) => {
@@ -96,4 +97,39 @@ export const getAuditAction = (type: string) => {
     default:
       return ''
   }
+}
+
+export const getRandomGreeting = () => {
+  const greetings = ["joined the party.", "just slid into the server.", "just landed.", "is here.", "just showed up!", "hopped into the server."]
+  return greetings[Math.floor(Math.random() * greetings.length)]
+}
+
+export const getBannerColor = () => {
+  return 'red'
+}
+
+export const getAverageRgb = (imgUrl: string) => {
+  var context = document.createElement('canvas').getContext('2d')
+
+  let img = new Image
+  img.src = imgUrl
+  
+  context!.drawImage(img, 0, 0, 1, 1)
+  const color = context!.getImageData(0, 0, 1, 1).data
+  return `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`
+}
+
+export const hideEmail = (rawEmail: string) => {
+  let hiddenEmail = ''
+
+  const emailSplit = rawEmail.split('@')
+  const beginningLength = emailSplit[0].length
+  const domain = '@' + emailSplit[1]
+  
+  for (let i = 0; i < beginningLength; i++) {
+    hiddenEmail += '*'
+  }
+  hiddenEmail += domain
+
+  return hiddenEmail
 }

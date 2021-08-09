@@ -21,10 +21,7 @@ const StyledDeleteServer = styled.div`
     padding: 10px;
     line-height: 20px;
     margin-bottom: 20px;
-  }
-
-
-  
+  } 
 `
 
 export default StyledDeleteServer

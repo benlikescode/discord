@@ -10,8 +10,15 @@ import { Input } from '../../../../System/Input'
 import firebase from 'firebase'
 import { Display } from './Display'
 import { Permissions } from './Permissions'
+import { selectRole } from '../../../../../reducers/role'
+import { useSelector } from 'react-redux'
+import Roles from '../Roles'
 
-const EditRoles: FC = () => {
+type Props = {
+  setCurrMainComponent: any
+}
+
+const EditRoles: FC<Props> = ({ setCurrMainComponent }) => {
   const { serverToken, channelToken }: any = useParams()
   const history = useHistory()
   const [roleIds, setRoleIds] = useState<string[]>([])
@@ -19,37 +26,43 @@ const EditRoles: FC = () => {
   const [activeRole, setActiveRole] = useState("")
   const [currTab, setCurrTab] = useState<'Display' | 'Permissions' | 'Members'>('Display')
 
+  const role = useSelector(selectRole)
+
   const loadRoles = async () => {
+    setRoleIds([])
     const thisServer = await fireDb.collection('servers').doc(serverToken).get()
     const roleIds: string[] = thisServer.data()!.roles
     setRoleIds(roleIds)  
-    setActiveRole(roleIds[0])            
+  }
+
+  const goBack = () => {
+    setCurrMainComponent(<Roles setCurrMainComponent={setCurrMainComponent}/>)
   }
 
   useEffect(() => {
     loadRoles()
+    setActiveRole(roleIds[0])            
   }, [])
 
-  const createRole = () => {
-    fireDb.collection('roles').add({
+  const createRole = async () => {
+    const newRole = await fireDb.collection('roles').add({
       color: '#99aab5',
       name: 'new role',
       permissions: ['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'],
       rank: 100,
       memberCount: 0
+    })  
+    await fireDb.collection('servers').doc(serverToken).update({
+      roles: firebase.firestore.FieldValue.arrayUnion(newRole.id)
     })
-    .then((role) => {
-      fireDb.collection('servers').doc(serverToken).update({
-        roles: firebase.firestore.FieldValue.arrayUnion(role.id)
-      })
-    })
+    loadRoles()
   }
 
   return (
     <StyledEditRoles>
       <div className="roleList">
         <div className="roleListHeader">
-          <div className="roleListHeaderLeft">
+          <div className="roleListHeaderLeft" onClick={() => goBack()}>
             <Icon size={18}><ArrowLeftIcon /></Icon>
             <span className="backText">Back</span>
           </div>
@@ -62,9 +75,9 @@ const EditRoles: FC = () => {
 
         <div className="list">
           { 
-          roleIds.map((roleId, idx) => (       
-            <RolePreview key={idx} roleId={roleId} setActiveRole={setActiveRole} activeRole={activeRole}/>         
-          ))
+            roleIds.map((roleId, idx) => (       
+              <RolePreview key={idx} roleId={roleId} setActiveRole={setActiveRole} activeRole={activeRole}/>         
+            ))
           }
           <RolePreview setActiveRole={setActiveRole} activeRole={activeRole}/>     
         </div>
@@ -74,8 +87,7 @@ const EditRoles: FC = () => {
       <div className="editRoleSection">
         <div className="editRoleHeader">
           <div className="editRoleTitleContainer">
-            <span>Edit Role - </span>
-            <span>Top Frag</span>
+            <span>{`Edit Role - ${role.name}`}</span>
           </div>
           <div className="tabBar">
             <div className={`tabBarItem ${currTab === 'Display' && 'tabBarItemActive'}`} onClick={() => setCurrTab("Display")}>Display</div>
@@ -84,7 +96,7 @@ const EditRoles: FC = () => {
           </div>
         </div>
 
-        { currTab === 'Display' && <Display />}
+        { currTab === 'Display' && <Display loadRoles={loadRoles}/>}
         { currTab === 'Permissions' && <Permissions /> }
 
       </div>

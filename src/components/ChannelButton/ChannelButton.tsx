@@ -13,19 +13,13 @@ import { selectUser } from '../../reducers/user'
 
 type Props = {
   channel: ChannelType
-  callBack?: (channel: ChannelType) => void
   channelType: 'voice' | 'text'
 }
 
-interface ParamTypes {
-  serverToken: string
-  channelToken: string
-}
-
-const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
+const ChannelButton: FC<Props> = ({ channel, channelType}) => {
   const history = useHistory()
   const [active, setActive] = useState(false)
-  const { serverToken, channelToken } = useParams<ParamTypes>()
+  const { channelToken }: any = useParams()
   const [remoteStream, setRemoteStream]: any = useState(null)
   const [localStream, setLocalStream]: any = useState(null)
 
@@ -33,9 +27,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
   const voice = useSelector(selectVoice)
   const user = useSelector(selectUser)
 
-
   const goToTextChannel = (channel: ChannelType) => {
-    callBack && callBack(channel)  
     history.push(`/server/${channel.serverToken}/${channel.id}`) 
   }
 
@@ -75,13 +67,8 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
       if (!voice.isMuted) {
         localStream.getAudioTracks()[0].enabled = true
       }
-    }
-    
+    } 
   }
-
-  useEffect(() => {
-    setActive(channel.id === channelToken)
-  }, [channel.id, channelToken])
 
   useEffect(() => {
     handleMute()
@@ -91,7 +78,7 @@ const ChannelButton: FC<Props> = ({ channel, callBack, channelType}) => {
     <ChannelButtonStyled>
       <button 
         onClick={() => channelType === 'text' ? goToTextChannel(channel) : goToVoiceChannel() } 
-        className={`text-channel-wrapper ${active ? 'active' : ''}`}
+        className={`text-channel-wrapper ${channel.id === channelToken ? 'active' : ''}`}
       >
         <div className="channelContent">
           {channelType === "text" ? <HashTag size={20} /> : <VoiceIcon size={20}/>}

@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { StyledInvite } from '.'
 import { ExitIcon } from '../../Icon'
-import { createInviteLink } from '../../../utils/helperFunctions'
 import { Button, Input, Searchbar } from '../../System'
 import { UserInfo } from '../../UserInfo'
 import { fireDb, realDb } from '../../../utils/firebase'
@@ -9,6 +8,8 @@ import { selectUser } from '../../../reducers/user'
 import { useSelector } from 'react-redux'
 import { OtherUserInfo } from '../../OtherUserInfo'
 import { selectServer } from '../../../reducers/server'
+import { useParams } from 'react-router-dom'
+import { getHostname } from '../../../utils/helperFunctions'
 
 
 type Props = {
@@ -17,11 +18,11 @@ type Props = {
 
 const Invite: FC<Props> = ({ closeModal }) => {
   const [isCopied, setIsCopied] = useState(false)
-  const [inviteLink, setInviteLink] = useState(createInviteLink())
+  const [inviteLink, setInviteLink] = useState("")
   const [friendsIds, setFriendIds] = useState<string[]>([])
   const user = useSelector(selectUser)
+  const { serverToken, channelToken }: any = useParams()
   const server = useSelector(selectServer)
-
 
   const copyInviteToClip = () => {
     const el = document.createElement('textarea')
@@ -69,8 +70,30 @@ const Invite: FC<Props> = ({ closeModal }) => {
     setFriendIds(filteredFriends)   
   }
 
+  const getServersInviteLink = async () => {
+    fireDb.collection('invites').where('serverId', '==', serverToken).onSnapshot(({ docs }) => {
+      if (docs.length > 0) {
+        let inviteId = docs.map(doc => doc.id)[0]
+        setInviteLink(getHostname() + "invite/" + inviteId)
+      }
+      else {
+        createInviteLink(serverToken, channelToken)       
+      }
+    }) 
+  }
+
+  const createInviteLink = async (serverId: string, generalId: string) => {
+    const newInvite = await fireDb.collection('invites').add({
+      serverId: serverId,
+      generalId: generalId,
+      dateCreated: Date.now()
+    })
+    setInviteLink(getHostname() + "invite/" + newInvite.id)
+  }
+
   useEffect(() => {
-    getFriends()  
+    getFriends()
+    getServersInviteLink()
   }, [])
 
   return (
@@ -102,7 +125,7 @@ const Invite: FC<Props> = ({ closeModal }) => {
       <div className="footer">
         <label className="inputLabel">Or, Send A Server Invite Link To A Friend</label>
         <div className="modal-input-wrapper">
-          <Input placeholder="new-server" value={inviteLink} type="text"/>
+          {inviteLink && <Input value={inviteLink} type="text" readOnly/>}
           <Button type="blue" callback={() => copyInviteToClip()}>{isCopied ? 'Copied' : 'Copy'}</Button>
         </div>
       </div>

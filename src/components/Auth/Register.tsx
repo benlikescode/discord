@@ -55,7 +55,7 @@ const Register: FC = () => {
   }
 
   const createNewSever = async (username : string, userId: string) => {
-    const thisServer = await fireDb.collection("servers").add({
+    const thisServer = await fireDb.collection('servers').add({
       name: username + "'s server",
       avatar: "",
       owner: userId,
@@ -64,11 +64,16 @@ const Register: FC = () => {
       banList: [],
       createdAt: Date.now()
     })
+    await fireDb.collection('servers').doc(thisServer.id).collection('members').doc(userId).set({
+      username: username,
+      nickname: '',
+      roles: []
+    })
     addGeneralChannel(thisServer)
   }
 
   const addGeneralChannel = async (server: any) => {
-    const thisChannel = await fireDb.collection("channels").add({
+    const thisChannel = await fireDb.collection('channels').add({
       name: "general",
       serverToken: server.id,
       createdAt: Date.now()

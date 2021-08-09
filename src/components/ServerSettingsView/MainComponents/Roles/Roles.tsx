@@ -10,57 +10,43 @@ import { EditRoles } from './EditRoles'
 import { selectServer } from '../../../../reducers/server'
 import { useSelector } from 'react-redux'
 import firebase from 'firebase'
-import { useParams } from 'react-router-dom'
 
 type Props = {
   setCurrMainComponent: any
 }
 
-interface ParamTypes {
-  serverToken: string
-}
-
 const Roles: FC<Props> = ({ setCurrMainComponent }) => {
   const server = useSelector(selectServer)
-  const { serverToken } = useParams<ParamTypes>()
   const [roleIds, setRoleIds] = useState<string[]>([])
 
-
-  // for whatever reason, when refereshing the edit roles page when using server from redux, we get an error as if we lost the server state on refresh?...
-
-  const createRole = () => {
-    fireDb.collection('roles').add({
+  const createRole = async () => {
+    const newRole = await fireDb.collection('roles').add({
       color: '#99aab5',
       name: 'new role',
       permissions: ['MX5XkG7GFuDU0EbiGx31', 'j6Yf5f33jU83MHd2KgGq'],
       rank: 100,
       memberCount: 0
     })
-    .then((role) => {
-      fireDb.collection('servers').doc(serverToken).update({
-        roles: firebase.firestore.FieldValue.arrayUnion(role.id)
-      })
+    await fireDb.collection('servers').doc(server.id).update({
+      roles: firebase.firestore.FieldValue.arrayUnion(newRole.id)
     })
     goToEditRoles()
   }
 
   const goToEditRoles = () => {
-    setCurrMainComponent(<EditRoles />)
+    setCurrMainComponent(<EditRoles setCurrMainComponent={setCurrMainComponent}/>)
   }
 
-  const loadRoles = () => {
-    fireDb.collection('servers').doc(serverToken).get()
-    .then((server) => {
-      const roleIds: string[] = server.data()!.roles
-      setRoleIds(roleIds)  
-    })
+  const loadRoles = async () => {
+    const thisServer = await fireDb.collection('servers').doc(server.id).get()  
+    setRoleIds(thisServer.data()!.roles)  
   }
 
   useEffect(() => {
-    loadRoles()
-  }, [])
-
- 
+    if (server.id) {
+      loadRoles()
+    }
+  }, [server.id])
 
   return (
     <StyledRoles>
@@ -91,7 +77,7 @@ const Roles: FC<Props> = ({ setCurrMainComponent }) => {
           <Searchbar />
         </div>
         <div className="createRoleButton">
-          <Button type="blue" callback={createRole}>Create Role</Button>
+          <Button type="blue" callback={() => createRole()}>Create Role</Button>
         </div>
       </div>
 

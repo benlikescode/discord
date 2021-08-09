@@ -6,6 +6,11 @@ import { fireDb, storage, auth, realDb } from '../../utils/firebase'
 import { logOutUser, selectUser, updateAvatar } from '../../reducers/user'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { Modal } from '../Modals'
+import { ChangeUsername } from '../Modals/ChangeUsername'
+import { hideEmail } from '../../utils/helperFunctions'
+import { Header } from '../ServerSettingsView/MainComponents/Header'
+import { ChangeEmail } from '../Modals/ChangeEmail'
 
 const UserSettingsView: FC = () => {
   const [image, setImage] = useState(null)
@@ -14,6 +19,15 @@ const UserSettingsView: FC = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const usersDB = fireDb.collection('users')
+  const [usernameModalOpen, setUsernameModalOpen] = useState(false)
+  const [emailModalOpen, setEmailModalOpen] = useState(false)
+
+  const [emailHidden, setEmailHidden] = useState(true)
+
+  const closeModal = () => {
+    setUsernameModalOpen(false)
+    setEmailModalOpen(false)
+  }
 
   const handleImageUpload = async (e: any) => {
     if (e.target.files && e.target.files[0]) {
@@ -51,6 +65,7 @@ const UserSettingsView: FC = () => {
   return (
     <StyledUserSettingsView>
       <div className="settingsContainer">
+        <Header title="My Account"/>
         <div className="accountProfileCard">
           <div className="banner"></div>
           <div className="userInfo">
@@ -63,6 +78,7 @@ const UserSettingsView: FC = () => {
               <span>{user.name}</span>
             </div>          
           </div>
+
           <div className="editUsernameSection">
             <div className="editUsername">
               <div className="text">
@@ -73,13 +89,67 @@ const UserSettingsView: FC = () => {
                   <span>{user.name}</span>
                 </div>
               </div>
-              <Button type="solid">Edit</Button>
+              <button className="editButton" onClick={() => setUsernameModalOpen(true)}>Edit</button>
+            </div>
+          </div>
+
+          <div className="editUsernameSection">
+            <div className="editUsername">
+              <div className="text">
+                <div className="textTop">
+                  <span>Email</span>
+                </div>
+                <div className="textBottom">
+                  <span>{emailHidden ? (user.email ? hideEmail(user.email) : '') : user.email}</span>
+                  <button className="revealEmail" onClick={() => setEmailHidden(prev => !prev)}>{emailHidden ? 'Reveal' : 'Hide'}</button>
+                </div>
+              </div>
+              <button className="editButton" onClick={() => setEmailModalOpen(true)}>Edit</button>
             </div>
           </div>
 
         </div>
-        <Button type="solid" callback={() => logOut()}>Logout</Button>
+
+        <div className="divider"></div>
+
+        <div className="passwordSection">
+          <div>
+            <h2 className="header">Password and Authentication</h2>
+            <Button type="blue">Change Password</Button>
+          </div>
+          <div className="imageWrapper">
+            <img src="https://discord.com/assets/cdea41ede63f61153e4a3c0531fa3873.svg" alt="" />
+          </div>
+         
+        </div>
+
+        <div className="divider"></div>
+
+        <div className="accountRemovalSection">
+          <h5 className="accountRemovalHeader">Account Removal</h5>
+          <div className="accountRemovalLabel">Deleting your account is a permanent action that can not be undone.</div>
+
+          <div className="accountRemovalBtns">
+            <button className="deleteAccountBtn">Delete Account</button>
+            <button className="logoutBtn" onClick={() => logOut()}>Logout</button>
+          </div>
+
+        </div>
+        
       </div>
+
+      {usernameModalOpen &&
+        <Modal closeModal={closeModal}>
+          <ChangeUsername closeModal={closeModal}/>
+        </Modal>
+      }
+
+      {emailModalOpen &&
+        <Modal closeModal={closeModal}>
+          <ChangeEmail closeModal={closeModal}/>
+        </Modal>
+      }
+
     </StyledUserSettingsView>
   )
 }

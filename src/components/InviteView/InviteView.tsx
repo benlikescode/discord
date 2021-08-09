@@ -1,46 +1,55 @@
-import React, { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { InviteViewStyled } from '.'
 import splashImage from './splash.png'
 import { useHistory, useParams } from 'react-router-dom'
-import { fireDb } from '../../utils/firebase'
+import { fireDb, realDb } from '../../utils/firebase'
 import { selectUser } from '../../reducers/user'
 import { useSelector } from 'react-redux'
-
-interface ParamTypes {
-  serverToken: string
-}
+import { InviteInvalid } from './InviteInvalid'
+import { ServerPreview } from './ServerPreview'
 
 const InviteView: FC = () => {
   const history = useHistory()
-  const { serverToken } = useParams<ParamTypes>()
   const user = useSelector(selectUser)
+  const { inviteToken }: any = useParams()
 
-  const addUserToServer = () => {
-    if (user.id) {
-      fireDb.collection('servers').doc(serverToken).get()
-      .then(server => {
-        const members: string[] = server.data()!.members
-        const generalId: string = server.data()!.generalId
+  const [invitedServerId, setInvitedServerId] = useState("")
+  const [invitedGeneralId, setInvitedGeneralId] = useState("")
+  const [invalidView, setInvalidView] = useState(false)
+  const [serverPreview, setServerPreview] = useState(false)
 
-        if (!members.includes(user.id)) {
-          fireDb.collection('servers').doc(serverToken).update({
-            members: members.concat(user.id)
-          })
-          .then(() => {
-            history.push(`/server/${serverToken}/${generalId}`)
-          })
-        }
-      }) 
+  const handleInvite = async () => {
+    const inviteRef = await fireDb.collection('invites').doc(inviteToken).get()
+    if (inviteRef.exists) {
+      const serverId = inviteRef.data()!.serverId
+      const generalId = inviteRef.data()!.generalId
+      const query = await fireDb.collection('servers').doc(serverId).collection('members').doc(user.id).get()
+      
+      if (query.exists) {
+        history.push(`/server/${serverId}/${generalId}`)
+      }
+      else {
+        setInvitedServerId(serverId)
+        setInvitedGeneralId(generalId)
+        setServerPreview(true)
+      }   
+    }
+    else {
+      setInvalidView(true)
     }
   }
 
   useEffect(() => {
-    addUserToServer()
+    if (user.id) {
+      handleInvite()
+    }
   }, [user.id])
 
   return (
     <InviteViewStyled >
-      <img src={ splashImage } className="splash-image" alt="" />
+      <img src={ splashImage } className="splashImage" alt="" />
+      { invalidView && <InviteInvalid /> }
+      { serverPreview && <ServerPreview serverId={invitedServerId} generalId={invitedGeneralId}/> }
     </InviteViewStyled>
   )
 }

@@ -17,8 +17,8 @@ const CreateServer: FC<Props> = ({ closeModal }) => {
   const user = useSelector(selectUser)
   const history = useHistory()
 
-  const createServer = () => {
-    fireDb.collection('servers').add({
+  const createServer = async () => {
+    const newServer = await fireDb.collection('servers').add({
       name: inputVal,
       avatar: "",
       members: [user.id],
@@ -27,21 +27,24 @@ const CreateServer: FC<Props> = ({ closeModal }) => {
       banList: [],
       createdAt: Date.now()
     })
-    .then((server) => addGeneralChannel(server)) 
+    addGeneralChannel(newServer)
   }
 
-  const addGeneralChannel = (server: any) => {
-    fireDb.collection("channels").add({
-      name: "general",
+  const addGeneralChannel = async (server: any) => {
+    const generalChannel = await fireDb.collection('channels').add({
+      name: 'general',
       serverToken: server.id,
       createdAt: Date.now()
     })
-    .then((channel) => {
-      fireDb.collection('servers').doc(server.id).update({generalId: channel.id})
-      closeModal()
-      history.push(`/server/${server.id}/${channel.id}`)
-      window.location.reload()
+  
+    await fireDb.collection('servers').doc(server.id).update({generalId: generalChannel.id})
+    await fireDb.collection('servers').doc(server.id).collection('members').doc(user.id).set({
+      username: user.name,
+      nickname: '',
+      roles: []
     })
+    closeModal()
+    history.push(`/server/${server.id}/${generalChannel.id}`)
   }
 
   return (

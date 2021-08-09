@@ -70,6 +70,40 @@ const ChannelMessagesStyled = styled.div<StyledProps>`
   .spacer {
     height: 1px;
   }
+
+  .welcomeMessageWrapper {
+    margin: 16px 16px 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-bottom: var(--border);
+    padding-bottom: 10px;
+  }
+
+  .welcomeMessageInner {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    max-width: 400px;
+  }
+
+  .welcomeMessage {
+    text-align: center;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .welcomeLabel {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 18px;
+    color: #b9bbbe;
+  }
 `
 
 export default ChannelMessagesStyled

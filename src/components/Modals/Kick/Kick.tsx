@@ -9,11 +9,12 @@ import firebase from 'firebase'
 import { selectUser } from '../../../reducers/user'
 
 type Props = {
-  closeModal: any
+  closeModal: () => void
+  closePopout: () => void
   userId: string
 }
 
-const Kick: FC<Props> = ({ closeModal, userId }) => {
+const Kick: FC<Props> = ({ closeModal, closePopout, userId }) => {
 
   const [kickMessage, setKickMessage] = useState("")
   const [clickedUsername, setClickedUsername] = useState("")
@@ -47,6 +48,7 @@ const Kick: FC<Props> = ({ closeModal, userId }) => {
   }
 
   useEffect(() => {
+    closePopout()
     if (userId) {
       getClickedUsername()
     }  

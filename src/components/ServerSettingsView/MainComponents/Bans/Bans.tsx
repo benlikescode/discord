@@ -7,7 +7,6 @@ import { fireDb } from '../../../../utils/firebase'
 import { Modal } from '../../../Modals'
 import { BannedMember } from '../../../Modals/BannedMember'
 import { OtherUserInfo } from '../../../OtherUserInfo'
-import { UserInfo } from '../../../UserInfo'
 import { Header } from '../Header'
 
 const Bans: FC = () => {

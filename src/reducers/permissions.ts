@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   viewChannels: true,
-  sendMessages: false,
+  sendMessages: true,
   createInvite: true,
   manageChannels: true,
   viewAuditLog: true,
