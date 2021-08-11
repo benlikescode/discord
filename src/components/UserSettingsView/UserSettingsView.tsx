@@ -11,6 +11,8 @@ import { ChangeUsername } from '../Modals/ChangeUsername'
 import { hideEmail } from '../../utils/helperFunctions'
 import { Header } from '../ServerSettingsView/MainComponents/Header'
 import { ChangeEmail } from '../Modals/ChangeEmail'
+import { ChangePassword } from '../Modals/ChangePassword'
+import { DeleteAccount } from '../Modals/DeleteAccount'
 
 const UserSettingsView: FC = () => {
   const [image, setImage] = useState(null)
@@ -19,14 +21,19 @@ const UserSettingsView: FC = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const usersDB = fireDb.collection('users')
+
   const [usernameModalOpen, setUsernameModalOpen] = useState(false)
   const [emailModalOpen, setEmailModalOpen] = useState(false)
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false)
+  const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState(false)
 
   const [emailHidden, setEmailHidden] = useState(true)
 
   const closeModal = () => {
     setUsernameModalOpen(false)
     setEmailModalOpen(false)
+    setPasswordModalOpen(false)
+    setDeleteAccountModalOpen(false)
   }
 
   const handleImageUpload = async (e: any) => {
@@ -115,7 +122,7 @@ const UserSettingsView: FC = () => {
         <div className="passwordSection">
           <div>
             <h2 className="header">Password and Authentication</h2>
-            <Button type="blue">Change Password</Button>
+            <Button type="blue" callback={() => setPasswordModalOpen(true)}>Change Password</Button>
           </div>
           <div className="imageWrapper">
             <img src="https://discord.com/assets/cdea41ede63f61153e4a3c0531fa3873.svg" alt="" />
@@ -130,7 +137,7 @@ const UserSettingsView: FC = () => {
           <div className="accountRemovalLabel">Deleting your account is a permanent action that can not be undone.</div>
 
           <div className="accountRemovalBtns">
-            <button className="deleteAccountBtn">Delete Account</button>
+            <button className="deleteAccountBtn" onClick={() => setDeleteAccountModalOpen(true)}>Delete Account</button>
             <button className="logoutBtn" onClick={() => logOut()}>Logout</button>
           </div>
 
@@ -147,6 +154,18 @@ const UserSettingsView: FC = () => {
       {emailModalOpen &&
         <Modal closeModal={closeModal}>
           <ChangeEmail closeModal={closeModal}/>
+        </Modal>
+      }
+
+      {passwordModalOpen && 
+        <Modal closeModal={closeModal}>
+          <ChangePassword closeModal={closeModal}/>
+        </Modal>
+      }
+
+      {deleteAccountModalOpen &&
+        <Modal closeModal={closeModal}>
+          <DeleteAccount closeModal={closeModal}/>
         </Modal>
       }
 
