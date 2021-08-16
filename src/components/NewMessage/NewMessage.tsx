@@ -8,6 +8,7 @@ import { selectPermissions } from '../../reducers/permissions'
 import { useParams } from 'react-router-dom'
 import { MessagePings } from '../Popouts/MessagePings'
 import { Popout } from '../Popouts/Popout'
+import { formatTypingMessage } from '../../utils/helperFunctions'
 
 type Props = {
   currentChannel: ChannelType
@@ -109,7 +110,7 @@ const NewMessage: FC<Props> = ({ currentChannel }) => {
       {typingUsers.length > 0 && 
         <div className="isTyping">
           <img src="/images/typingAnimation.gif" className="typingAnimation" alt="Typing"/>
-          {typingUsers.map(username => <span><strong>{username}</strong> is typing...</span>)}      
+          { formatTypingMessage(typingUsers) }         
         </div>
       }
 

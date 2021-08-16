@@ -133,3 +133,21 @@ export const hideEmail = (rawEmail: string) => {
 
   return hiddenEmail
 }
+
+export const formatTypingMessage = (typingUsers: string[]) => {
+    if (typingUsers.length === 1) {
+      return <span><strong>{typingUsers[0]}</strong> is typing...</span>
+    }
+
+    let spanContents = ""
+
+    typingUsers.map((username, idx) => {
+      if (idx === typingUsers.length - 1) {
+        spanContents += `${username} are typing`   
+      }
+      else {
+        spanContents += `${username}, and `
+      }     
+    })
+    return <span>{spanContents}</span>   
+  }

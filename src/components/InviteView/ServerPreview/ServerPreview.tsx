@@ -57,7 +57,7 @@ const ServerPreview: FC<Props> = ({ serverId, generalId }) => {
   }
 
   const sendGreetingMessage = async (generalId: string) => {
-    const greetingMsg = realDb.ref(generalId).push()
+    const greetingMsg = realDb.ref(generalId).child('messages').push()
     greetingMsg.set({
       user: user.name,
       content: getRandomGreeting(),

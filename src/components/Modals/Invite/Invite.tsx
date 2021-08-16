@@ -46,7 +46,7 @@ const Invite: FC<Props> = ({ closeModal }) => {
   }
 
   const sendDMWithInvite = async (DMId: string) => {
-    const newMessage = await realDb.ref(DMId).push()
+    const newMessage = await realDb.ref(DMId).child('messages').push()
     newMessage.set({
       user: user.name,
       content: inviteLink,
