@@ -24,6 +24,18 @@ const NewMessageStyled = styled.div<StyledProps>`
     height: 45px;
     pointer-events: ${({ canSendMessages }) => !canSendMessages && 'none'};
   }
+
+  .isTyping {
+    color: #dcddde;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+
+  .typingAnimation {
+    margin: 0 5px;
+    height: 7px;
+  }
 `
 
 export default NewMessageStyled

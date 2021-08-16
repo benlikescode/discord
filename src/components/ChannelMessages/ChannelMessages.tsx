@@ -39,7 +39,7 @@ const ChannelMessages: FC<Props> = ({ type, currentDirectName }) => {
   }
 
   useEffect(() => { 
-    realDb.ref(channelToken).on('value', (( snapshot ) => {
+    realDb.ref(channelToken).child('messages').on('value', (( snapshot ) => {
       let messageList: JSX.Element[] = []
       let lastUser = ""
 
