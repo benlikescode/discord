@@ -12,6 +12,7 @@ import { selectServer } from '../../reducers/server'
 import { useSelector } from 'react-redux'
 import { selectChannel } from '../../reducers/channel'
 import { useParams } from 'react-router-dom'
+import { NewMessageTest } from '../NewMessageTest'
 
 type Props = {
   type: 'channelMessages' | 'directMessages'
@@ -31,7 +32,7 @@ const ChannelMessages: FC<Props> = ({ type, currentDirectName }) => {
 
   const deleteMessage = async (messageId: string) => {
     const dbRef = realDb.ref();
-    dbRef.child(channelToken).child(messageId).remove()
+    dbRef.child(channelToken).child('messages').child(messageId).remove()
   }
 
   const editMessage = async () => {
@@ -88,21 +89,27 @@ const ChannelMessages: FC<Props> = ({ type, currentDirectName }) => {
 
       <div className="channel-messages-body">
         <div className="messaging-container">
-          <div ref={ messageListRef } className="message-list">
-           
-            <div className="welcomeMessageWrapper">
-              <div className="welcomeMessageInner">
-                <h3 className="welcomeMessage">Welcome to {channel.name === 'general' ? server.name : `#${channel.name}!`}</h3>
-                <span className="welcomeLabel">{`This is the beginning of ${channel.name === 'general' ? 'this server.' : `the #${channel.name} channel.`}`}</span>
-              </div>
-            </div>
-            
-            { messages }
+          <div className="messageViewMain">
+            <div className="messages" ref={messageListRef}>
+              <div className="messagesScroll">
+                <div className="messagesInner2">
+                  <div className="welcomeMessageWrapper">
+                    <div className="welcomeMessageInner">
+                      <h3 className="welcomeMessage">Welcome to {channel.name === 'general' ? server.name : `#${channel.name}!`}</h3>
+                      <span className="welcomeLabel">{`This is the beginning of ${channel.name === 'general' ? 'this server.' : `the #${channel.name} channel.`}`}</span>
+                    </div>
+                  </div>
+                
+                  { messages }
 
-            <div className="spacer"/>
-          </div>
-    
-          <NewMessage currentChannel={channel} />
+                </div>
+              </div>             
+            </div>
+
+            <div className="messageInput">
+              <NewMessageTest currentChannel={channel} />
+            </div>
+          </div>         
         </div>
 
         {(memberListOpen && type === 'channelMessages') && <MemberSidebar/>}

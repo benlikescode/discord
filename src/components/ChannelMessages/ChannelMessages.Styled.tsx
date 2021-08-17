@@ -33,26 +33,7 @@ const ChannelMessagesStyled = styled.div<StyledProps>`
     align-items: center;
   }
   
-  .message-list {
-    height: calc(100vh - 48px - 69px);
-    overflow-y: auto;
-    display: grid;
-    align-content: start;
-    grid-gap: 1rem;
-    padding: 1rem 0;
-    box-sizing: border-box;
-  }
-
-  .message-list::-webkit-scrollbar {
-    width: 7px;
-    background: #2e3338;
-    border-radius: 50rem;
-  }
-
-  .message-list::-webkit-scrollbar-thumb {
-    background: #202225;
-    border-radius: 50rem;
-  }
+  
 
   .light-gray-btns {
     outline: none;
@@ -65,10 +46,6 @@ const ChannelMessagesStyled = styled.div<StyledProps>`
     display: grid;
     grid-template-columns: ${({ memberListOpen }) => memberListOpen ? 'auto 240px;' : '1fr;'}
     height: calc(100vh - 48px);
-  }
-
-  .spacer {
-    height: 1px;
   }
 
   .welcomeMessageWrapper {
@@ -103,6 +80,54 @@ const ChannelMessagesStyled = styled.div<StyledProps>`
     font-size: 14px;
     line-height: 18px;
     color: #b9bbbe;
+  }
+
+  .messagesScroll {
+    height: auto;
+    top: -8px;
+    bottom: 0;
+    padding-left: 0;
+  }
+
+  .messagesInner2 {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    outline: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    display: grid;
+    align-content: start;
+    grid-gap: 1rem;
+    padding: 1rem 0;
+    box-sizing: border-box;
+  }
+
+  .messageViewMain {   
+    display: flex;  
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    padding-left: 1px;
+    overflow: hidden;
+  }
+  
+  .messages {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    
+  }
+
+  .messageInput {  
+    min-height: 60px;
+    padding: 16px;
   }
 `
 

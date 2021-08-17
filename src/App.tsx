@@ -14,10 +14,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateUser, logOutUser, selectUser } from './reducers/user'
 import { DirectMessageView } from './components/DirectMessageView'
 import { AppLayout } from './components/AppLayout'
+import { selectChannel } from './reducers/channel'
+import { useTitle } from './utils/customHooks/useTitle'
 
 const App: FC = () => {
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
+  const channel = useSelector(selectChannel)
+
+  useTitle(channel.name || 'Bencord')
 
   // updating Users State
   useEffect(() => {

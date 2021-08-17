@@ -21,7 +21,7 @@ const MessageStyled = styled.div<StyledProps>`
   }
   
   .user-profile-spacer {
-    width: 40px;
+    padding-left: 40px;
   }
 
   .message-info {
@@ -45,6 +45,7 @@ const MessageStyled = styled.div<StyledProps>`
     color: #DCDDDE;
     display: block;
     word-wrap: break-word;
+    line-height: 1.375rem;
   }
 
   .message-username {
